@@ -1,0 +1,94 @@
+<template>
+    <div class="profile">
+        <b-card>
+            <b-tabs pills vertical>
+                <b-tab active>
+                    <template #title>
+                        <div class="text-center"  >
+                            <p></p>
+                            <font-awesome-icon icon="fa-solid fa-id-card" size="2x" />
+                            <p>Mis datos</p>
+                        </div>
+                    </template>
+                    <div class="w-50"> 
+                    <h1>Mis datos</h1>
+                    <UserData />
+                    </div>
+                </b-tab>
+
+                <b-tab>
+                    <template #title>
+                        <div class="text-center">
+                            <p></p>
+                            <font-awesome-icon icon="fa-solid fa-ghost" size="2x" />
+                            <p>Mis juegos</p>
+                        </div>
+                    </template>
+                    <h1>Mis juegos</h1>
+                </b-tab>
+                <b-tab>
+                    <template #title>
+                        <div class="text-center">
+                            <p></p>
+                            <font-awesome-icon icon="fa-solid fa-envelopes-bulk" size="2x" />
+                            <p>Solicitudes de compra</p>
+                        </div>
+                    </template>
+                    <h1>Solicitudes de compra</h1>
+                </b-tab>
+                <b-tab>
+                    <template #title>
+                        <div class="text-center">
+                            <p></p>
+                            <font-awesome-icon icon="fa-solid fa-star" size="2x" />
+                            <p>Favoritos</p>
+                        </div>
+                    </template>
+                    <h1>Favoritos</h1>
+                </b-tab>
+                <b-tab>
+                    <template #title>
+                        <div class="text-center">
+                            <p></p>
+                            <font-awesome-icon icon="fa-solid fa-thumbs-up" size="xl" />&nbsp;
+                            <font-awesome-icon icon="fa-solid fa-thumbs-down" size="xl" />
+                            <p>Valoraciones</p>
+                        </div>
+                    </template>
+                    <h1>Valoraciones</h1>
+                </b-tab>
+                <b-tab>
+                    <template #title>
+                        <div class="text-center">
+                            <p></p>
+                            <font-awesome-icon icon="fa-solid fa-list-check" size="2x" />
+                            <p>Categorías</p>
+                        </div>
+                    </template>
+
+                    <h1>Categorías</h1>
+                </b-tab>
+                <b-tab>
+                    <template #title>
+                        <div class="text-center">
+                            <p></p>
+                            <font-awesome-icon icon="fa-solid fa-users" size="2x" />
+                            <p>Usuarios</p>
+                        </div>
+                    </template>
+                    <h1>Usuarios</h1>
+                </b-tab>
+            </b-tabs>
+        </b-card>
+    </div>
+</template>
+
+<script>
+    import UserData from '@/views/UserView.vue'
+    export default {
+        name: 'App',
+        components: {
+            UserData
+        }
+    }
+</script>
