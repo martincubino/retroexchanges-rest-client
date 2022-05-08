@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import API_BASE_URL from '../main.js'
+const API_BASE_URL = 'http://localhost:8080/api';
 
 //const token = 'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoiZmptYXJ0aW5jdWJpbm9AZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE2NTE1MTUwNDAsImV4cCI6MTY1MTYwMTQ0MH0.WtcxXs4EXTLcXDBpygNu1Sr2pREoLb3PQ1K7l-PG4IcdvvCojefZ6KxcwwvPEBkbGU6zkSn47WeB43pyIUErfg'
 

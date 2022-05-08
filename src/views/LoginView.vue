@@ -104,6 +104,8 @@
       const actionPayload = {
         email: this.email,
         password: this.password,
+        name: this.name,
+        surname: this.surname
       };
 
       try {
