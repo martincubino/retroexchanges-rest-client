@@ -1,5 +1,5 @@
 export default{
-    userId(state) {
+    email(state) {
         return state.email;
     }
 };

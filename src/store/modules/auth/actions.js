@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 const API_BASE_URL = 'http://localhost:8080/api';
 
 export default {
@@ -8,10 +6,11 @@ export default {
       email: payload.email,
       password: payload.password
     };
-    console.log(login);
-    const response = await axios.post(API_BASE_URL + '/login', 
-      login,
-      { headers: {
+    //const response = await axios.post(API_BASE_URL + '/login', 
+    const response = await fetch(API_BASE_URL + '/login', {
+      method: 'POST',
+      body: JSON.stringify(login),
+      headers: {
         'Content-Type': 'application/json',
       }
     });
@@ -28,15 +27,16 @@ export default {
       token: responseData.token,
       email: responseData.email,
       createAt: responseData.createAt,
-      expirationAt: responseData.expirationAt
+      expirateAt: responseData.expirateAt
     });
   },
   async signup(context, payload) {
     console.log(payload);
-    const response = await axios.post(API_BASE_URL+'/register', payload,
-      { headers: {
+    const response = await fetch(API_BASE_URL + '/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
         'Content-Type': 'application/json',
-        'Accept': '*/*',
       }
     });
 
@@ -48,12 +48,14 @@ export default {
       throw error;
     }
 
-    console.log(responseData);
+    if (response.ok) {
+      console.log(responseData);
+    }
     context.commit('setUser', {
-    //  token: responseData.token,
-      email: responseData.email
-      //tokenCreation: responseData.createAt,
-      //tokenExpiration: responseData.expiresAt
+      token: responseData.token,
+      email: responseData.email,
+      createAt: responseData.createAt,
+      expirateAt: responseData.expirateAt,
     });
   }
 };
