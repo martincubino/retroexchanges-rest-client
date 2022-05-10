@@ -8,6 +8,10 @@
 
                         <h2 class="h3 mb-3 fw-normal text-center">{{submitButtonCaption}}</h2>
 
+                        <b-alert :show="!!error" dismissible fade variant="danger">
+                            <p>{{ error }}</p>
+                        </b-alert>
+
 
                         <div class="form-group">
                             <label>Dirección de correo</label>
@@ -91,6 +95,7 @@
         },
         methods: {
             async submitForm() {
+                this.handleError();
                 this.formIsValid = true;
                 if (
                     this.email === '' ||
@@ -131,7 +136,7 @@
             },
             handleError() {
                 this.error = null;
-            },
+            }
         },
     };
 </script>

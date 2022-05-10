@@ -15,14 +15,12 @@ export default {
       }
     });
 
-    const responseData = await response.json();
-    
+    let responseData = await response.json();
     if (!response.ok) {
-      console.log(responseData);
-      const error = new Error(responseData.message || 'Failed to authenticate. Check your login data.');
+      const error = new Error('Failed to send request');
       throw error;
     }
-    
+
     context.commit('setUser', {
       token: responseData.token,
       email: responseData.email,
@@ -30,6 +28,7 @@ export default {
       expirateAt: responseData.expirateAt
     });
   },
+
   async signup(context, payload) {
     console.log(payload);
     const response = await fetch(API_BASE_URL + '/register', {
