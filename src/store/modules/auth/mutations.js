@@ -1,5 +1,5 @@
 export default {
-  setUser(state, payload) {
+  setAuth(state, payload) {
     state.token = payload.token;
     state.email = payload.email;
     state.tokenCreateAt = payload.createAt;

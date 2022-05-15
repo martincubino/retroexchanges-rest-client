@@ -10,9 +10,9 @@
                             <p>Mis datos</p>
                         </div>
                     </template>
-                    <div class="w-50"> 
+                    <div> 
                     <h1>Mis datos</h1>
-                    <UserData />
+                    <UserData/>
                     </div>
                 </b-tab>
 

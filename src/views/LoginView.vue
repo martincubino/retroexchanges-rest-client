@@ -1,18 +1,13 @@
 <template>
     <b-overlay :show="isLoading" title="Authenticating..." rounded="sm">
         <main class="form-signin">
-
             <div class="card">
                 <div class="card-body m-4 p-4">
                     <form @submit.prevent="submitForm">
-
                         <h2 class="h3 mb-3 fw-normal text-center">{{submitButtonCaption}}</h2>
-
                         <b-alert :show="!!error" dismissible fade variant="danger">
                             <p>{{ error }}</p>
                         </b-alert>
-
-
                         <div class="form-group">
                             <label>Dirección de correo</label>
                             <input required type="email" class="form-control form-control-lg" placeholder="email"
@@ -37,7 +32,6 @@
                             <p v-if="!formIsValid">Introduzca un correo electronico y contraseña válidos (contraseña
                                 mayor
                                 de 6 carácteres)</p>
-
                             <b-col>
                                 <!--<router-link class="w-100 btn btn-lg btn-primary" type="submit" to="/profile">Iniciar sesión-->
                                 <b-button class="btn-primary btn-lg" type="submit">{{submitButtonCaption}}</b-button>
@@ -121,8 +115,10 @@
                     } else {
                         await this.$store.dispatch('signup', actionPayload);
                     }
+                    const redirectUrl = '/' + (this.$route.query.redirect || 'profile');
+                    this.$router.replace(redirectUrl);
                 } catch (err) {
-                    this.error = err.message || 'Failed to authenticate, try later.';
+                    this.error = err.message;
                 }
 
                 this.isLoading = false;
@@ -136,7 +132,18 @@
             },
             handleError() {
                 this.error = null;
-            }
+            },
+            async logout() {
+                try {
+                    if (this.isLoggedIn === true) {
+                        await this.$store.dispatch('logout');
+                    }
+                    const redirectUrl = '/' + (this.$route.query.redirect || 'login');
+                    this.$router.replace(redirectUrl);
+                } catch (err) {
+                    this.error = err.message;
+                }
+            },
         },
     };
 </script>

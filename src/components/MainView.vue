@@ -16,7 +16,12 @@ export default {
   name: 'App',
   components: {
     Category
-  }
+  }, 
+    data() {
+      return {
+        gettingLocation: false
+      }
+    }
 }
 </script>
 

@@ -21,9 +21,12 @@
         <b-navbar-nav small class="ml-auto">
           <b-nav-form>
             <b-nav-item class="text-center" :to="{name:'login'}" exact>
-              <p></p>
-              <b-icon icon="person"></b-icon>
-              <p>Iniciar sesion</p>
+              <p v-if="isLoggedIn">
+                <b-icon icon="box-arrow-right"></b-icon><br>{{initSesionCaption}}
+              </p>
+              <p v-else>
+                <b-icon icon="person"></b-icon><br>{{initSesionCaption}}
+              </p>
             </b-nav-item>
           </b-nav-form>
         </b-navbar-nav>
@@ -32,3 +35,26 @@
     <router-view />
   </div>
 </template>
+<script>
+  export default {
+    name: 'App',
+    components: {},
+    data() {
+      return {
+        error: null
+      }
+    },
+    computed: {
+      isLoggedIn() {
+        return this.$store.getters.isAuthenticated;
+      },
+      initSesionCaption() {
+        if (this.isLoggedIn === false) {
+          return 'Iniciar sesión';
+        } else {
+          return 'Cerrar sesión';
+        }
+      },
+    }
+  }
+</script>
