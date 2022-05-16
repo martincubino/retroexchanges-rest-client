@@ -6,7 +6,9 @@ export default {
   namespaced: true,
   state() {
     return {
+      lastFetch:null,
       user: null,
+      users: []
     };
   },
   mutations,

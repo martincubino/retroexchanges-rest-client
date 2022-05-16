@@ -4,15 +4,15 @@
             <b-tabs pills vertical>
                 <b-tab active>
                     <template #title>
-                        <div class="text-center"  >
+                        <div class="text-center">
                             <p></p>
                             <font-awesome-icon icon="fa-solid fa-id-card" size="2x" />
                             <p>Mis datos</p>
                         </div>
                     </template>
-                    <div> 
-                    <h1>Mis datos</h1>
-                    <UserData/>
+                    <div>
+                        <h1>Mis datos</h1>
+                        <UserData />
                     </div>
                 </b-tab>
 
@@ -57,7 +57,7 @@
                     </template>
                     <h1>Valoraciones</h1>
                 </b-tab>
-                <b-tab>
+                <b-tab v-if="isAdmin">
                     <template #title>
                         <div class="text-center">
                             <p></p>
@@ -68,7 +68,7 @@
 
                     <h1>Categorías</h1>
                 </b-tab>
-                <b-tab>
+                <b-tab v-if="isAdmin">
                     <template #title>
                         <div class="text-center">
                             <p></p>
@@ -77,6 +77,7 @@
                         </div>
                     </template>
                     <h1>Usuarios</h1>
+                    <UserListView />
                 </b-tab>
             </b-tabs>
         </b-card>
@@ -85,10 +86,25 @@
 
 <script>
     import UserData from '@/views/UserView.vue'
+    import UserListView from '@/views/UserListView.vue'
     export default {
         name: 'App',
         components: {
-            UserData
+            UserData,
+            UserListView
+        },
+        data() {
+            return {
+                isAdmin: false
+            }
+        },
+        created() {
+            this. isAdmin = this.$store.getters.isAdmin;
+        },
+        methods: {
+            handleError() {
+                this.error = null;
+            }
         }
     }
 </script>

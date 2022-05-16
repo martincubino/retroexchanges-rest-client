@@ -42,6 +42,7 @@ export default {
     context.commit('setAuth', {
       token: responseData.token,
       email: responseData.email,
+      isAdmin: responseData.isAdmin,
       createAt: responseData.createAt,
       expirateAt: responseData.expirateAt
     });
@@ -71,14 +72,16 @@ export default {
     context.commit('setAuth', {
       token: responseData.token,
       email: responseData.email,
+      isAdmin: responseData.isAdmin,
       createAt: responseData.createAt,
       expirateAt: responseData.expirateAt,
     });
   },
   logout(context) {
-    context.commit('setUser', {
+    context.commit('setAuth', {
       token: null,
       email:  null,
+      isAdmin: null,
       createAt:  null,
       expirateAt:  null
     });

@@ -20,7 +20,24 @@
         </b-navbar-nav>
         <b-navbar-nav small class="ml-auto">
           <b-nav-form>
-            <b-nav-item class="text-center" :to="{name:'login'}" exact>
+            <b-nav-item class="text-center" :to="{name:'profile'}" exact>
+              <p></p>
+              <p v-if="isLoggedIn">
+                <b-icon icon="person"></b-icon><br>{{getUserEmail}}
+              </p>
+              
+            </b-nav-item>
+            <b-nav-item class="text-center" v-if="isLoggedIn" :to="{name:'logout'}" exact>
+              <p></p>
+              <p v-if="isLoggedIn">
+                <b-icon icon="box-arrow-right"></b-icon><br>{{initSesionCaption}}
+              </p>
+              <p v-else>
+                <b-icon icon="person"></b-icon><br>{{initSesionCaption}}
+              </p>
+              </b-nav-item>
+              <b-nav-item class="text-center" v-if="isLoggedIn == false" :to="{name:'login'}" exact>
+              <p></p>
               <p v-if="isLoggedIn">
                 <b-icon icon="box-arrow-right"></b-icon><br>{{initSesionCaption}}
               </p>
@@ -47,6 +64,9 @@
     computed: {
       isLoggedIn() {
         return this.$store.getters.isAuthenticated;
+      },
+      getUserEmail() {
+          return this.$store.getters.email;
       },
       initSesionCaption() {
         if (this.isLoggedIn === false) {

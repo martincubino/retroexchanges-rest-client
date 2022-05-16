@@ -45,12 +45,13 @@
                     </form>
                 </div>
             </div>
-        </main>
+          </main>
     </b-overlay>
 </template>
 
 <script>
     export default {
+        
         data() {
             return {
                 email: '',
@@ -64,13 +65,16 @@
             };
         },
         computed: {
+            
+            isLoggedIn() {
+                return this.$store.getters.isAuthenticated;
+            },
             loginMode() {
                 if (this.mode === 'login') {
                     return false;
                 } else {
                     return true;
                 }
-
             },
             submitButtonCaption() {
                 if (this.mode === 'login') {
@@ -132,17 +136,6 @@
             },
             handleError() {
                 this.error = null;
-            },
-            async logout() {
-                try {
-                    if (this.isLoggedIn === true) {
-                        await this.$store.dispatch('logout');
-                    }
-                    const redirectUrl = '/' + (this.$route.query.redirect || 'login');
-                    this.$router.replace(redirectUrl);
-                } catch (err) {
-                    this.error = err.message;
-                }
             },
         },
     };

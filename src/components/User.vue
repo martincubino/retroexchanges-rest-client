@@ -8,7 +8,8 @@
                 <th> Surname </th>
                 <th> Address </th>
                 <th> NIF </th>
-                
+                <th> Reputación </th>
+                <th> </th>
             </thead>
             <tbody>
                 <tr v-for = "user in users " v-bind:key = "user.email">

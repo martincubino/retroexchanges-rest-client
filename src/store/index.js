@@ -7,7 +7,6 @@ import userModule from './modules/user/index.js';
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  
   modules: {
     auth: authModule,
     user: userModule

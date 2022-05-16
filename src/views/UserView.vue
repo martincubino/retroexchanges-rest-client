@@ -1,12 +1,20 @@
 <template>
   <div class="form-group">
-    <div class="col-md-6 mt-5">
+    <div class="mt-5">
       <b-form @submit="onSubmit">
         <div v-if="isLoading">
           <b-spinner>Cargando...</b-spinner>
         </div>
         <b-alert :show="!!error" dismissible fade variant="danger">
           <p>{{ error }}</p>
+        </b-alert>
+        <b-alert :show="!formIsValid" dismissible fade variant="danger">
+          <p>{{formFormatWarning}}</p>
+        </b-alert>
+        <b-alert :show="dismissCountDown" dismissible variant="success" @dismissed="dismissCountDown=0"
+          @dismiss-count-down="countDownChanged">
+          <p>Los datos se guardaron correctamente</p>
+          <b-progress variant="success" :max="dismissSecs" :value="dismissCountDown" height="4px"></b-progress>
         </b-alert>
         <b-row>
           <b-col cols="4">
@@ -17,8 +25,12 @@
           </b-col>
           <b-col cols="8">
             <b-form-group id="input-group-3" label="Dirección:" label-for="input-3">
-              <b-form-input id="input-3" v-model="address" type="text" placeholder="Introduzca su dirección">
-              </b-form-input>
+              <b-input-group>
+                <b-form-input v-model=address></b-form-input>
+                <b-input-group-append>
+                  <b-button @click="getCoordinates" variant="secondary">Centrar</b-button>
+                </b-input-group-append>
+              </b-input-group>
             </b-form-group>
           </b-col>
         </b-row>
@@ -49,7 +61,7 @@
           </b-col>
           <b-col cols="8">
             <div v-if="gettingLocation">
-              <i>Getting your location...</i>
+              <i>Obteniendo la localización...</i>
             </div>
             <div border-color=white style="height: 380px; width: 100%">
               <p></p>
@@ -101,6 +113,11 @@
     },
     data() {
       return {
+        dismissSecs: 5,
+        dismissCountDown: 0,
+        showDismissibleAlert: false,
+        formIsValid: true,
+        formFormatWarning: 'Introduzca un correo electronico y contraseña válidos (contraseña mayor de 6 carácteres)',
         isLoading: false,
         error: null,
         name: null,
@@ -145,6 +162,12 @@
       }
     },
     methods: {
+      countDownChanged(dismissCountDown) {
+        this.dismissCountDown = dismissCountDown
+      },
+      showAlert() {
+        this.dismissCountDown = this.dismissSecs
+      },
       goHome() {
         const redirectUrl = '/';
         this.$router.replace(redirectUrl);
@@ -164,20 +187,18 @@
               address: this.address
             });
           } catch (error) {
-            this.error = error.message || 'Something went wrong!';
+            this.error = error.message || 'No se pudo obtener la localización';
           }
           let user = this.$store.getters['user/getUser'];
-          console.log(user.latitude);
-          console.log(user.longitude);
           this.markerLatLng = latLng(user.latitude, user.longitude);
           this.centerUpdate(user.latitude, user.longitude)
           this.showMap = true;
         }
       },
       async getStreet() {
-        //do we support geolocation
+        // comprobamos si la geolocalización esta disponible
         if (!("geolocation" in navigator)) {
-          this.errorStr = 'Geolocation is not available.';
+          this.errorStr = 'Geolocation no disponible.';
           return;
         }
         this.showMap = false;
@@ -200,7 +221,7 @@
               longitude: this.longitude
             });
           } catch (error) {
-            this.error = error.message || 'Something went wrong!';
+            this.error = error.message || 'No se pudo obtener la localización';
             this.showMap = true;
           }
           this.gettingLocation = false;
@@ -209,18 +230,49 @@
           this.showMap = true;
         }
       },
-      onSubmit(event) {
-        event.preventDefault()
-        alert(JSON.stringify(this.form))
+      async onSubmit(event) {
+        this.handleError();
+        this.formIsValid = true;
+        if (
+          this.email === '' ||
+          !this.email.includes('@') ||
+          this.password.length < 6
+        ) {
+          this.formFormatWarning =
+            'Introduzca un correo electronico y contraseña válidos (contraseña mayor de 6 carácteres)';
+          this.formIsValid = false;
+          return false;
+        }
+        if (this.password != this.repassword) {
+          this.formFormatWarning = 'Las contraseñas introducidas no coinciden. Revise los datos introducidos.';
+          this.formIsValid = false;
+          return false;
+        }
+        let user = {
+          name: this.name,
+          surname: this.surname,
+          email: this.email,
+          address: this.address,
+          password: this.password,
+
+          nif: this.nif
+        }
+        try {
+          await this.$store.dispatch('user/updateUser', user);
+          event.preventDefault()
+          this.showAlert();
+        } catch (error) {
+          this.error = error.message || 'No se pudo recuperar la información del usuario';
+        }
+
+
       },
-      async loadUser(refresh = false) {
+      async loadUser() {
         this.isLoading = true;
         try {
-          await this.$store.dispatch('user/loadUser', {
-            forceRefresh: refresh,
-          });
+          await this.$store.dispatch('user/loadUser');
         } catch (error) {
-          this.error = error.message || 'Something went wrong!';
+          this.error = error.message || 'No se pudo recuperar la información del usuario';
         }
         this.isLoading = false;
         let user = this.$store.getters['user/getUser'];

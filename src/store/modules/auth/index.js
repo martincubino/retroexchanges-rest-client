@@ -7,6 +7,7 @@ export default {
     return {
       token: null,
       email: null,
+      isAdmin: null,
       tokenExpirateAt: null,
       tokenCreateAt: null
     };

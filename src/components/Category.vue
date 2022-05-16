@@ -34,7 +34,6 @@
 
 <script>
     import CategoryService from '@/services/CategoryService'
-
     export default {
         name: 'CategoryItems',
         data() {
