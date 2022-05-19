@@ -28,7 +28,6 @@ Vue.config.productionTip = false
 
 require('@/plugins/fontawesome');
 
-console.log(process.env)
 new Vue({
   store,
   router,

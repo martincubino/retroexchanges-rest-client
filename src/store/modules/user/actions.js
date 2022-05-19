@@ -1,11 +1,8 @@
 const url = require('url');
 
 export default {
-  async loadUser(context, payload) {
-    console.log(payload);
-    /*if (!payload.forceRefresh && !context.getters.shouldUpdate) {
-      return;
-    }*/
+  async loadUser(context) {
+    
     const token = context.rootGetters.token;
     const email = context.rootGetters.email;
 
@@ -48,10 +45,7 @@ export default {
     });
   },
   async updateUser(context, payload) {
-    console.log(payload);
-    /*if (!payload.forceRefresh && !context.getters.shouldUpdate) {
-      return;
-    }*/
+    
     const token = context.rootGetters.token;
     const email = context.rootGetters.email;
 
@@ -95,11 +89,7 @@ export default {
     });
   },
   async getUserLocation(context, payload) {
-    console.log(payload);
-    /*if (!payload.forceRefresh && !context.getters.shouldUpdate) {
-      return;
-    }*/
-
+    
     let u = url.parse(process.env.VUE_APP_API_NOMINATIM_BASE_URL + payload.address + '&format=jsonv2');
 
     const response = await fetch(u.href, {
@@ -110,7 +100,7 @@ export default {
     })
 
     const responseData = await response.json();
-    console.log(responseData);
+    
     if (!response.ok) {
       let error_message = 'Fallo al intentar obterner ubicacion. Intentelo de nuevo mas tarde.';
       const error = new Error(error_message);
@@ -126,11 +116,7 @@ export default {
     }
   },
   async getLocationAddress(context, payload) {
-    console.log(payload);
-    /*if (!payload.forceRefresh && !context.getters.shouldUpdate) {
-      return;
-    }*/
-
+    
     let u = url.parse(process.env.VUE_APP_API_NOMINATIM_REVERSE_BASE_URL + 'lat=' + payload.latitude + '&lon=' + payload.longitude + '&format=json&addressdetails=1&zoom=16');
 
     const response = await fetch(u.href, {
@@ -141,7 +127,7 @@ export default {
     })
 
     const responseData = await response.json();
-    console.log(responseData);
+
     if (!response.ok) {
       let error_message = 'Fallo al intentar obterner ubicacion. Intentelo de nuevo mas tarde.';
       const error = new Error(error_message);
@@ -154,9 +140,7 @@ export default {
       });
     }
   },
-  async loadUsers(context, payload) {
-    console.log(payload);
-
+  async loadUsers(context) {
     const token = context.rootGetters.token;
 
     const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/users`, {

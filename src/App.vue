@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="sm" type="dark" variant="info">
+    <b-navbar class="shadow" toggleable="sm" type="dark" variant="info">
       <b-navbar-brand :to="{name:'home'}" exact>
         <img src="@/assets/images/logo.png" alt="RetroExchanges">
       </b-navbar-brand>
@@ -25,7 +25,6 @@
               <p v-if="isLoggedIn">
                 <b-icon icon="person"></b-icon><br>{{getUserEmail}}
               </p>
-              
             </b-nav-item>
             <b-nav-item class="text-center" v-if="isLoggedIn" :to="{name:'logout'}" exact>
               <p></p>
@@ -54,7 +53,7 @@
 </template>
 <script>
   export default {
-    name: 'App',
+    name: 'RetroExchanges',
     components: {},
     data() {
       return {

@@ -65,8 +65,8 @@
                             <p>Categorías</p>
                         </div>
                     </template>
-
                     <h1>Categorías</h1>
+                    <CategoryListView />
                 </b-tab>
                 <b-tab v-if="isAdmin">
                     <template #title>
@@ -87,11 +87,13 @@
 <script>
     import UserData from '@/views/UserView.vue'
     import UserListView from '@/views/UserListView.vue'
+    import CategoryListView from '@/views/CategoryListView.vue'
     export default {
-        name: 'App',
+        name: 'RetroExchanges',
         components: {
             UserData,
-            UserListView
+            UserListView,
+            CategoryListView
         },
         data() {
             return {

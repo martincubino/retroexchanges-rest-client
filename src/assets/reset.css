@@ -1,13 +1,16 @@
 /*reset.css*/
 /* RESETS */
 
-  .navbar {
-        background-color:#1A1A8D !important
-    }
-    
-    body {
-        background-color: #F4F5F7;
-      }
+.navbar {
+background: rgb(255,255,255);
+background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(5,5,89,1) 10%, rgba(102,102,217,1) 100%);
+}
 
-      
+
+
+body {
+  background-color: #F4F5F7;
+}
+
+
 /*END RESETS*/

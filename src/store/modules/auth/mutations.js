@@ -5,6 +5,7 @@ export default {
     state.isAdmin = payload.isAdmin;
     state.tokenCreateAt = payload.createAt;
     state.tokenExpirateAt = payload.expirateAt;
+    localStorage.setItem('auth', JSON.stringify(state));
   }
 };
 

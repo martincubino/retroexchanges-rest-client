@@ -45,7 +45,6 @@
         },
         methods: {
             getSelectedItem(id){
-                console.log(id);
                 let categoryId = JSON.parse(id).categoryId;
                 CategoryService.getCategory(categoryId).then((response) => {
                     this.category = response.data;

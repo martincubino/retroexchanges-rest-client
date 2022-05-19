@@ -85,7 +85,6 @@
 </template>
 
 <script>
-  //const nominatim = require('nominatim');
   import {
     latLng
   } from "leaflet";

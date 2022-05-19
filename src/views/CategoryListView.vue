@@ -6,20 +6,37 @@
     <div>
       <b-table striped hover :items="listItems" :fields="fields" :current-page="currentPage" :per-page="5">
         <template v-slot:cell(action)="data">
-          <b-button size="sm" class="mr-1" @click="edit(data)"> Edit </b-button>
-          <b-button size="sm" @click="deleteRecord(data)"> Delete </b-button>
+          <b-button variant="primary" class="mr-1" @click="editCategory(data)"> Editar </b-button>
+        </template>
+        <template v-slot:cell(image)="data">
+          <img :src="`data:image/png;base64,${data.item.image}`" />
+        </template>
+        <template v-slot:cell(createAt)="data">
+          <span>{{ new Date(data.item.createAt).toLocaleString() }}</span>
+        </template>
+        <template v-slot:cell(updatedAt)="data">
+          <span>{{ new Date(data.item.updatedAt).toLocaleString() }}</span>
         </template>
       </b-table>
       <b-pagination v-model="currentPage" :total-rows="totalPages" :per-page="recordsPerPage">
       </b-pagination>
     </div>
+    <br>
+    <p align="left">
+      <b-button class="aling-left" variant="outline-primary" @click="newCategory(data)">Nueva categoría</b-button>
+    </p>
+    <b-modal size="lg" @hide="loadCategories" centered ref="modalCategory" title="Editar categoría" hide-footer>
+      <CategoryView :id="this.categoryId" :new="(this.modalTitle=='Nueva categoría')"/>
+    </b-modal>
   </div>
 </template>
 
-
 <script>
+  import CategoryView from '@/views/CategoryView.vue'
   export default {
-    components: {},
+    components: {
+      CategoryView
+    },
     data() {
       return {
         isLoading: false,
@@ -29,11 +46,17 @@
         totalPages: 0,
         recordsPerPage: 5,
         fields: [{
-            key: "email",
-            label: "Correo",
+            key: "categoryId",
+            label: "Id",
             class: "text-left",
             sortable: true,
             sortDirection: "desc",
+          },
+          {
+            key: "image",
+            label: "",
+            sortable: false,
+            image: true
           },
           {
             key: "name",
@@ -42,17 +65,22 @@
             class: "text-left",
           },
           {
-            key: "surname",
-            label: "Apellidos",
+            key: "description",
+            label: "Descripción",
             class: "text-left",
             sortable: true,
-            image: true,
           },
           {
-            key: "address",
-            label: "Dirección",
-              class: "text-left",
-            sortable: true,
+            key: "createAt",
+            label: "Creada",
+            class: "text-left",
+            sortable: false,
+          },
+          {
+            key: "updatedAt",
+            label: "Actualizada",
+            class: "text-left",
+            sortable: false,
           },
           {
             key: "action",
@@ -60,16 +88,21 @@
           },
         ],
         params: "",
+        categoryId: null,
+        modalTitle: "Nueva categoría"
       }
     },
     computed: {
+      getCategoryId() {
+        return this.categoryId;
+      },
       isLoggedIn() {
         return this.$store.getters.isAuthenticated;
       },
     },
     created() {
       if (this.$store.getters.isAdmin) {
-        this.loadUsers();
+        this.loadCategories();
       } else {
         const redirectUrl = '/' + (this.$route.query.redirect || 'login');
         this.$router.replace(redirectUrl);
@@ -79,21 +112,21 @@
       currentPage: {
         handler: function (value) {
           this.params = `page=${value}&size=${this.recordsPerPage}`;
-          this.loadUsers();
+          this.loadCategories();
         },
       },
     },
     methods: {
-      async loadUsers() {
+      async loadCategories() {
         this.isLoading = true;
-         this.params = `page=${this.currentPage}&size=${this.recordsPerPage}`;
+        this.params = `page=${this.currentPage}&size=${this.recordsPerPage}`;
         try {
-          await this.$store.dispatch('user/loadUsers');
-          this.listItems = this.$store.getters['user/getUsers'];
+          await this.$store.dispatch('category/loadCategories');
+          this.listItems = this.$store.getters['category/getCategories'];
           this.totalPages = this.listItems.length;
           this.isLoading = false;
         } catch (error) {
-          this.error = error.message || 'No se pudo cargar el listado de usuarios';
+          this.error = error.message || 'No se pudo cargar el listado de categorias';
           this.isLoading = false;
         }
       },
@@ -116,12 +149,21 @@
             }
           });
       },
-      edit(data) {
-        alert(JSON.stringify(data));
+      editCategory(data) {
+        this.categoryId = data.item.categoryId;
+        this.modalTitle="Editar categoría";
+        console.log(this.categoryId);
+        this.$refs.modalCategory.show();
+      },
+      newCategory() {
+        this.categoryId = 0;
+        this.modalTitle="Nueva categoría";
+        console.log(this.categoryId);
+        this.$refs.modalCategory.show();
       },
       handleError() {
         this.error = null;
-      },
+      }
     }
   }
 </script>

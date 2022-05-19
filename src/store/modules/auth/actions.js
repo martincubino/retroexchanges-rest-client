@@ -1,7 +1,6 @@
 
 export default {
   async login(context, payload) {
-    console.log(process.env.API_REST_BASE_URL);
     let login = {
       email: payload.email,
       password: payload.password
@@ -14,8 +13,8 @@ export default {
         'Content-Type': 'application/json',
       }
     }).catch(e=>{
-      console.log(e.message);
       let error_message = 'Fallo de autenticación. Intentelo de nuevo mas tarde.';
+      console.log(e.message);
       const error = new Error(error_message);
       throw error;
     });
@@ -49,7 +48,6 @@ export default {
   },
 
   async signup(context, payload) {
-    console.log(payload);
     const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/register`, {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -61,13 +59,8 @@ export default {
     const responseData = await response.json();
 
     if (!response.ok) {
-      console.log(responseData);
       const error = new Error(responseData.message || 'Failed to authenticate. Check your login data.');
       throw error;
-    }
-
-    if (response.ok) {
-      console.log(responseData);
     }
     context.commit('setAuth', {
       token: responseData.token,
