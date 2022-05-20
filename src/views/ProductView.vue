@@ -20,21 +20,10 @@
                 </b-alert>
                 <b-row>
                     <b-col cols="11">
-                        <b-form-group id="input-group-1" label="Nombre:" label-for="input-1">
-                            <b-form-input id="input-1" v-model="name" type="text"
-                                placeholder="Introduzca el nombre de la categoría" required>
-                            </b-form-input>
-                        </b-form-group>
-                        <b-form-group id="input-group-2" label="Descripción:" label-for="input-2">
-                            <b-form-input id="input-2" v-model="description" type="text"
-                                placeholder="Introduzca la descripción de la categoría" required>
-                            </b-form-input>
-                        </b-form-group>
-
                         <b-form-group id="input-group-3" label="Imagen:" label-for="input-3">
                             <b-card>
                                 <div v-if="image">
-                                    <b-img center :src="`data:image/png;base64,${image}`"  width="200" height="auto" />
+                                    <b-img center :src="`data:image/png;base64,${image}`" />
                                     <b-button size="sm" class="float-right" variant="secondary" @click="removeImage()">
                                         Borrar imagen</b-button>
                                 </div>
@@ -49,7 +38,29 @@
                             </b-card>
                             <br>
                         </b-form-group>
-                        <p></p>
+                    </b-col>
+                    <b-col cols="11">
+                        <b-form-group id="input-group-1" label="Nombre:" label-for="input-1">
+                            <b-form-input id="input-1" v-model="name" type="text"
+                                placeholder="Introduzca el nombre del videojuego o consola" required>
+                            </b-form-input>
+                        </b-form-group>
+                        <b-form-group id="input-group-2" label="Descripción:" label-for="input-2">
+                            <b-form-textarea rows="3" max-rows="5" id="input-2" v-model="description" type="text"
+                                placeholder="Introduzca la descripción del videojuego o consola" required>
+                            </b-form-textarea>
+                        </b-form-group>
+                        <div>
+                            <b-form-select v-model="categoryId" :options="categories" text-field="name" value-field="categoryId" required ></b-form-select>
+                            <div class="mt-3">Selected: <strong>{{ selected }}</strong></div>
+                        </div>
+                    </b-col>
+                    <b-col cols="4">
+                        <b-form-group id="input-group-4" label="Precio:" label-for="input-4">
+                            <b-form-input id="input-4" v-model="price" type="number" placeholder="Introduzca el precio"
+                                required>
+                            </b-form-input>
+                        </b-form-group>
                     </b-col>
                 </b-row>
                 <div slot="modal-footer" class="w-100">
@@ -79,12 +90,16 @@
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
                 formFormatWarning: null,
+                categories: [],
                 error: null,
                 name: null,
                 description: null,
+                price: null,
+                owner: null,
                 image: null,
-                imageUploaded: null,
                 categoryId: null,
+                imageUploaded: null,
+                prod: null,
                 formIsValid: true,
                 file1: null
             }
@@ -96,8 +111,10 @@
         },
         created() {
             if (this.$store.getters.isAuthenticated) {
+                this.categories = this.$store.getters['category/getCategories'];
+                this.owner = this.$store.getters.email;
                 if (this.new == false) {
-                    this.loadCategory();
+                    this.loadProduct();
                 }
             } else {
                 const redirectUrl = '/' + (this.$route.query.redirect || 'login');
@@ -117,24 +134,29 @@
             },
             async onSubmit() {
                 this.handleError();
-                    let category = {
-                        categoryId: this.categoryId,
-                        name: this.name,
-                        description: this.description,
-                        image: this.image
-                    }
+                let product = {
+                    name: this.name,
+                    description: this.description,
+                    owner: this.owner,
+                    price: this.price,
+                    categoryId: this.categoryId,
+                    status: this.status
+                }
+
                 if (this.new == false) {
-                
                     try {
-                        await this.$store.dispatch('category/updateCategory', category);
+                        product.productId = this.productId;
+                        
+                        await this.$store.dispatch('product/updateProduct', product);
                         //event.preventDefault()
                         this.showAlert();
                     } catch (error) {
-                        this.error = error.message || 'No se pudo recuperar la información de la categoria';
+                        this.error = error.message || 'No se pudo actualizar la información de la product';
                     }
                 } else {
+                    product.status="AVAILABLE";
                     try {
-                        await this.$store.dispatch('category/createCategory', category);
+                        await this.$store.dispatch('product/createProduct', product);
                         //event.preventDefault()
                         this.showAlert();
                     } catch (error) {
@@ -142,21 +164,23 @@
                     }
                 }
             },
-            async loadCategory() {
+            async loadProduct() {
                 this.isLoading = true;
                 try {
-                    await this.$store.dispatch('category/loadCategory', this.id);
+                    await this.$store.dispatch('product/loadProduct', this.id);
                 } catch (error) {
-                    this.error = error.message || 'No se pudo recuperar la información de la categoria';
+                    this.error = error.message || 'No se pudo recuperar la información del videojuego';
                 }
                 this.isLoading = false;
-                let category = this.$store.getters['category/getCategory'];
-                this.name = category.name;
-                this.description = category.description;
-                this.image = category.image;
-                this.createAt = category.createAt;
-                this.updatedAt = category.updatedAt;
-                this.categoryId = category.categoryId;
+                let product = this.$store.getters['product/getProduct'];
+                this.name = product.name;
+                this.description = product.description;
+                this.createAt = product.createAt;
+                this.updatedAt = product.updatedAt;
+                this.productId = product.productId;
+                this.owner = product.owner;
+                this.price = product.price;
+                this.categoryId = product.categoryId;
             },
             onFileChange(e) {
                 var files = e.target.files || e.dataTransfer.files;
@@ -171,7 +195,6 @@
 
                 reader.onload = (e) => {
                     vm.image = e.target.result;
-                    console.log(this.image);
                     let imageURI = this.image.split(',');
                     vm.image = imageURI[1];
 

@@ -12,7 +12,7 @@
                     </template>
                     <div>
                         <h1>Mis datos</h1>
-                        <UserData />
+                        <UserDataView />
                     </div>
                 </b-tab>
 
@@ -21,10 +21,11 @@
                         <div class="text-center">
                             <p></p>
                             <font-awesome-icon icon="fa-solid fa-ghost" size="2x" />
-                            <p>Mis juegos</p>
+                            <p>Mis videojuegos</p>
                         </div>
                     </template>
-                    <h1>Mis juegos</h1>
+                    <h1>Mis videojuegos</h1>
+                    <ProductListView />
                 </b-tab>
                 <b-tab>
                     <template #title>
@@ -85,15 +86,17 @@
 </template>
 
 <script>
-    import UserData from '@/views/UserView.vue'
+    import UserDataView from '@/views/UserDataView.vue'
     import UserListView from '@/views/UserListView.vue'
     import CategoryListView from '@/views/CategoryListView.vue'
+    import ProductListView from '@/views/ProductListView.vue'
     export default {
         name: 'RetroExchanges',
         components: {
-            UserData,
+            UserDataView,
             UserListView,
-            CategoryListView
+            CategoryListView,
+            ProductListView
         },
         data() {
             return {

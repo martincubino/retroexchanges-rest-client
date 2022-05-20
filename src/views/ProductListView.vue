@@ -6,10 +6,10 @@
     <div>
       <b-table striped hover :items="listItems" :fields="fields" :current-page="currentPage" :per-page="5">
         <template v-slot:cell(action)="data">
-          <b-button variant="primary" class="mr-1" @click="editCategory(data)"> Editar </b-button>
+          <b-button variant="primary" class="mr-1" @click="editProduct(data)"> Editar </b-button>
         </template>
         <template v-slot:cell(image)="data">
-          <img v-if="data.item.image" :src="`data:image/png;base64,${data.item.image}`"  class="center" width="auto" height="80"/>
+          <img v-if="data.item.image" :src="`data:image/png;base64,${data.item.image}`" />
         </template>
         <template v-slot:cell(createAt)="data">
           <span>{{ new Date(data.item.createAt).toLocaleString() }}</span>
@@ -23,19 +23,19 @@
     </div>
     <br>
     <p align="left">
-      <b-button class="aling-left" variant="outline-primary" @click="newCategory(data)">Nueva categoría</b-button>
+      <b-button class="aling-left" variant="outline-primary" @click="newProduct(data)">Nuevo videojuego</b-button>
     </p>
-    <b-modal size="lg" @hide="loadCategories" centered ref="modalCategory" v-bind:title=this.modalTitle hide-footer>
-      <CategoryView :id="this.categoryId" :new="(this.modalTitle=='Nueva categoría')"/>
+    <b-modal size="lg" @hide="loadProducts" centered ref="modalProduct" v-bind:title=this.modalTitle hide-footer>
+      <ProductView :id="this.productId" :new="(this.modalTitle=='Nuevo videojuego')"/>
     </b-modal>
   </div>
 </template>
 
 <script>
-  import CategoryView from '@/views/CategoryView.vue'
+  import ProductView from '@/views/ProductView.vue'
   export default {
     components: {
-      CategoryView
+      ProductView
     },
     data() {
       return {
@@ -45,19 +45,21 @@
         currentPage: 1,
         totalPages: 0,
         recordsPerPage: 5,
-        fields: [{
-            key: "categoryId",
-            label: "Id",
-            class: "text-left",
-            sortable: true,
-            sortDirection: "desc",
-          },
+        fields: [
           {
             key: "image",
             label: "",
             sortable: false,
             image: true
           },
+          {
+            key: "productId",
+            label: "Id",
+            class: "text-left",
+            sortable: true,
+            sortDirection: "desc",
+          },
+          
           {
             key: "name",
             label: "Nombre",
@@ -72,13 +74,13 @@
           },
           {
             key: "createAt",
-            label: "Creada",
+            label: "Creado",
             class: "text-left",
             sortable: false,
           },
           {
             key: "updatedAt",
-            label: "Actualizada",
+            label: "Actualizado",
             class: "text-left",
             sortable: false,
           },
@@ -88,78 +90,54 @@
           },
         ],
         params: "",
-        categoryId: null,
-        modalTitle: "Nueva categoría"
+        productId: null,
+        modalTitle: "Nuevo videojuego"
       }
     },
     computed: {
-      getCategoryId() {
-        return this.categoryId;
+      getProductId() {
+        return this.productId;
       },
       isLoggedIn() {
         return this.$store.getters.isAuthenticated;
       },
     },
     created() {
-      if (this.$store.getters.isAdmin) {
-        this.loadCategories();
-      } else {
-        const redirectUrl = '/' + (this.$route.query.redirect || 'login');
-        this.$router.replace(redirectUrl);
+      if (this.isLoggedIn){
+        this.loadProducts();
       }
     },
     watch: {
       currentPage: {
         handler: function (value) {
           this.params = `page=${value}&size=${this.recordsPerPage}`;
-          this.loadCategories();
+          this.loadProducts();
         },
       },
     },
     methods: {
-      async loadCategories() {
+      async loadProducts() {
         this.isLoading = true;
         this.params = `page=${this.currentPage}&size=${this.recordsPerPage}`;
         try {
-          await this.$store.dispatch('category/loadCategories');
-          this.listItems = this.$store.getters['category/getCategories'];
+          await this.$store.dispatch('product/loadProducts');
+          this.listItems = this.$store.getters['product/getProducts'];
           this.totalPages = this.listItems.length;
           this.isLoading = false;
         } catch (error) {
-          this.error = error.message || 'No se pudo cargar el listado de categorias';
+          this.error = error.message || 'No se pudo cargar el listado de productos';
           this.isLoading = false;
         }
       },
-      deleteRecord(data) {
-        this.$bvModal
-          .msgBoxConfirm("Are you sure wants to delete?", {
-            title: "Please Confirm",
-            size: "mm",
-            buttonSize: "sm",
-            okVariant: "danger",
-            okTitle: "YES",
-            cancelTitle: "NO",
-            footerClass: "p-2",
-            hideHeaderClose: false,
-            centered: true,
-          })
-          .then((value) => {
-            if (value) {
-              this.listItems.splice(data.index, 1);
-            }
-          });
+      editProduct(data) {
+        this.productId = data.item.productId;
+        this.modalTitle="Editar videojuego";
+        this.$refs.modalProduct.show();
       },
-      editCategory(data) {
-        this.categoryId = data.item.categoryId;
-        this.modalTitle="Editar categoría";
-        console.log(this.categoryId);
-        this.$refs.modalCategory.show();
-      },
-      newCategory() {
-        this.categoryId = 0;
-        this.modalTitle="Nueva categoría";
-        console.log(this.categoryId);
-        this.$refs.modalCategory.show();
+      newProduct() {
+        this.productId = 0;
+        this.modalTitle="Nuevo videojuego";
+        this.$refs.modalProduct.show();
       },
       handleError() {
         this.error = null;

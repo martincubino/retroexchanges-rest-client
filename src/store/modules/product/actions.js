@@ -1,25 +1,20 @@
-const uri2blob = require('datauritoblob');
+//const uri2blob = require('datauritoblob');
 
 export default {
-  async loadCategory(context, payload) {
-
-    const categoryId = payload;
-
-    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/category/${categoryId}`, {
+  async loadProduct(context, payload) {
+    const productId = payload;
+    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/product/${productId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
-
     }).catch(e => {
       let error_message = 'Fallo de autenticación. Intentelo de nuevo mas tarde.';
-      console.log(e.message);
-      const error = new Error(error_message);
+      const error = new Error(error_message + '.(' + e.message + ')');
       throw error;
     });
 
     const responseData = await response.json();
-
     if (!response.ok) {
       let error_message = '';
       switch (response.status) {
@@ -27,7 +22,7 @@ export default {
           error_message = 'Fallo de autenticación. Revise los datos introducidos.';
           break;
         case 404:
-          error_message = 'Categoria no encontrada.';
+          error_message = 'Producto no encontrado.';
           break;
         default:
           error_message = 'Fallo al intentar obtener los datos. Intentelo de nuevo mas tarde.';
@@ -37,43 +32,32 @@ export default {
       throw error;
     }
 
-    context.commit('setCategory', {
+    context.commit('setProduct', {
+      productId: responseData.productId,
       categoryId: responseData.categoryId,
       name: responseData.name,
-      createAt: responseData.createAt,
       description: responseData.description,
-      image: responseData.image,
+      createAt: responseData.createAt,
       updatedAt: responseData.updatedAt,
+      price: responseData.price,
+      owner: responseData.owner,
+      status: responseData.status
     });
   },
-  async updateCategory(context, payload) {
+
+  async updateProduct(context, payload) {
     const token = context.rootGetters.token;
-    const categoryId = payload.categoryId;
+    const productId = payload.productId;
 
-    
-
-    const formData = new FormData();
-
-    formData.append('name',payload.name);
-    formData.append('description',payload.description);
-
-    var imgBase64 = "data:image/png;base64,"
-
-    
-    const file = uri2blob(imgBase64+payload.image);
-
-    formData.append('logo',file,'logo.png');
-    
-    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/category/${categoryId}`, {
+    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/product/${productId}`, {
       method: 'PUT',
-      body: formData,
+      body: payload,
       headers: {
         'Authorization': `Bearer ${token}`,
       }
     }).catch(e => {
       let error_message = 'Fallo de autenticación. Intentelo de nuevo mas tarde.';
-      console.log(e.message);
-      const error = new Error(error_message);
+      const error = new Error(error_message + '.(' + e.message + ')');
       throw error;
     });
 
@@ -97,42 +81,33 @@ export default {
     }
 
     context.commit('setCategory', {
+      productId: responseData.productId,
       categoryId: responseData.categoryId,
       name: responseData.name,
       description: responseData.description,
       createAt: responseData.createAt,
-      image: responseData.image,
       updatedAt: responseData.updatedAt,
+      price: responseData.price,
+      owner: responseData.owner,
+      status: responseData.status
     });
   },
-  async createCategory(context, payload) {
-    
+  async createProduct(context, payload) {
+
     const token = context.rootGetters.token;
+
     
-    const formData = new FormData();
 
-    formData.append('name',payload.name);
-    formData.append('description',payload.description);
-
-    var imgBase64 = "data:image/png;base64,"
-
-    const file = uri2blob(imgBase64+payload.image);
-
-    formData.append('logo',file,'logo.png');
-
-    let uri = process.env.VUE_APP_API_REST_BASE_URL+"/category";
-    
-    const response = await fetch(uri, {
+    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/product`, {
       method: 'POST',
-      body: formData,
+      body: JSON.stringify(payload),
       headers: new Headers({
         'Authorization': `Bearer ${token}`
-        
+
       })
     }).catch(e => {
       let error_message = 'Fallo de autenticación. Intentelo de nuevo mas tarde.';
-      console.log(e.message);
-      const error = new Error(error_message);
+      const error = new Error(error_message + '.(' + e.message + ')');
       throw error;
     });
     const responseData = await response.json();
@@ -151,20 +126,21 @@ export default {
       throw error;
     }
 
-    context.commit('setCategory', {
+    context.commit('setProduct', {
+      productId: responseData.productId,
       categoryId: responseData.categoryId,
       name: responseData.name,
       description: responseData.description,
       createAt: responseData.createAt,
-      image: responseData.image,
       updatedAt: responseData.updatedAt,
+      price: responseData.price,
+      owner: responseData.owner,
+      status: responseData.status
     });
   },
-  async loadCategories(context,payload) {
+  async loadProducts(context) {
 
-    console.log(payload);
-    
-    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/categories`, {
+    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/products`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -180,7 +156,7 @@ export default {
           error_message = 'Fallo de autenticación. Revise los datos introducidos.';
           break;
         case 404:
-          error_message = 'No se encontraron categorias. ';
+          error_message = 'No se encontraron productos.';
           break;
         default:
           error_message = 'Fallo al intentar obtener los datos. Intentelo de nuevo mas tarde.';
@@ -190,21 +166,24 @@ export default {
       throw error;
     }
 
-    const categories = [];
+    const products = [];
 
     for (const key in responseData) {
-      const category = {
+      const product = {
         id: key,
+        productId: responseData[key].productId,
         categoryId: responseData[key].categoryId,
         name: responseData[key].name,
         description: responseData[key].description,
         createAt: responseData[key].createAt,
-        image: responseData[key].image,
         updatedAt: responseData[key].updatedAt,
+        price: responseData[key].price,
+        owner: responseData[key].owner,
+
       };
-      categories.push(category);
+      products.push(product);
     }
-    context.commit('setCategories', categories);
+    context.commit('setProducts', products);
     context.commit('setFetchTimestamp');
   }
 };
