@@ -34,26 +34,27 @@ export default {
 
     context.commit('setProduct', {
       productId: responseData.productId,
-      categoryId: responseData.categoryId,
+      category: responseData.category,
       name: responseData.name,
       description: responseData.description,
       createAt: responseData.createAt,
       updatedAt: responseData.updatedAt,
       price: responseData.price,
       owner: responseData.owner,
-      status: responseData.status
+      status: responseData.status,
+      pictureList:  responseData.pictureList
     });
   },
-
   async updateProduct(context, payload) {
     const token = context.rootGetters.token;
     const productId = payload.productId;
 
     const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/product/${productId}`, {
       method: 'PUT',
-      body: payload,
+      body: JSON.stringify(payload),
       headers: {
         'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
     }).catch(e => {
       let error_message = 'Fallo de autenticación. Intentelo de nuevo mas tarde.';
@@ -80,28 +81,28 @@ export default {
       throw error;
     }
 
-    context.commit('setCategory', {
+    context.commit('setProduct', {
       productId: responseData.productId,
-      categoryId: responseData.categoryId,
+      category: responseData.category,
       name: responseData.name,
       description: responseData.description,
       createAt: responseData.createAt,
       updatedAt: responseData.updatedAt,
       price: responseData.price,
       owner: responseData.owner,
-      status: responseData.status
+      status: responseData.status,
+      pictureList:  responseData.pictureList
     });
   },
   async createProduct(context, payload) {
 
     const token = context.rootGetters.token;
 
-    
-
     const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/product`, {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: new Headers({
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
 
       })
@@ -128,19 +129,26 @@ export default {
 
     context.commit('setProduct', {
       productId: responseData.productId,
-      categoryId: responseData.categoryId,
+      category: responseData.category,
       name: responseData.name,
       description: responseData.description,
       createAt: responseData.createAt,
       updatedAt: responseData.updatedAt,
       price: responseData.price,
       owner: responseData.owner,
-      status: responseData.status
+      status: responseData.status,
+      pictureList:  responseData.pictureList
     });
   },
-  async loadProducts(context) {
-
-    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/products`, {
+  async loadProducts(context,payload) {
+    let getUrl = '';
+    if (typeof payload == "undefined"){
+      getUrl=`${process.env.VUE_APP_API_REST_BASE_URL}/products`
+    }else{
+          getUrl=`${process.env.VUE_APP_API_REST_BASE_URL}/products/${payload.type}/${payload.value}`      
+      }
+    
+    const response = await fetch(getUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -172,13 +180,15 @@ export default {
       const product = {
         id: key,
         productId: responseData[key].productId,
-        categoryId: responseData[key].categoryId,
+        category: responseData[key].category,
         name: responseData[key].name,
         description: responseData[key].description,
         createAt: responseData[key].createAt,
         updatedAt: responseData[key].updatedAt,
         price: responseData[key].price,
         owner: responseData[key].owner,
+        status: responseData[key].status,
+        pictureList: responseData[key].pictureList,
 
       };
       products.push(product);

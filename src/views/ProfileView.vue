@@ -1,7 +1,7 @@
 <template>
     <div class="profile">
         <b-card>
-            <b-tabs pills vertical>
+            <b-tabs @activate-tab="afterTabSelection()" pills vertical>
                 <b-tab active>
                     <template #title>
                         <div class="text-center">
@@ -12,7 +12,7 @@
                     </template>
                     <div>
                         <h1>Mis datos</h1>
-                        <UserDataView />
+                        <UserDataView ref="userDataView" />
                     </div>
                 </b-tab>
 
@@ -46,6 +46,7 @@
                         </div>
                     </template>
                     <h1>Favoritos</h1>
+                    <FavoriteProductList />
                 </b-tab>
                 <b-tab>
                     <template #title>
@@ -90,13 +91,16 @@
     import UserListView from '@/views/UserListView.vue'
     import CategoryListView from '@/views/CategoryListView.vue'
     import ProductListView from '@/views/ProductListView.vue'
+    import FavoriteProductList from '@/views/FavoriteProductList.vue'
+    
     export default {
         name: 'RetroExchanges',
         components: {
             UserDataView,
             UserListView,
             CategoryListView,
-            ProductListView
+            ProductListView,
+            FavoriteProductList
         },
         data() {
             return {
@@ -104,9 +108,11 @@
             }
         },
         created() {
-            this. isAdmin = this.$store.getters.isAdmin;
+            this.isAdmin = this.$store.getters.isAdmin;
         },
         methods: {
+             afterTabSelection: function() {
+            },
             handleError() {
                 this.error = null;
             }

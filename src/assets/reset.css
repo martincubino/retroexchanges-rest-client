@@ -12,5 +12,11 @@ body {
   background-color: #F4F5F7;
 }
 
+.carousel {
+  width: auto;
+  height: auto;
+  max-width: 300px;
+  max-height: 500px;
+}
 
 /*END RESETS*/

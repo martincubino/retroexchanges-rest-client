@@ -34,14 +34,14 @@
                         <b-form-group id="input-group-3" label="Imagen:" label-for="input-3">
                             <b-card>
                                 <div v-if="image">
-                                    <b-img center :src="`data:image/png;base64,${image}`"  width="200" height="auto" />
+                                    <b-img center :src="`data:image/png;base64,${image}`" width="200" height="auto" />
                                     <b-button size="sm" class="float-right" variant="secondary" @click="removeImage()">
                                         Borrar imagen</b-button>
                                 </div>
                                 <div v-else>
                                     <b-form-file size="sm" @change="onFileChange" browse-text="Buscar"
-                                        accept="image/png" v-model="file1" :state="Boolean(file1)"
-                                        placeholder="Seleccione un fichero de imagen (png) o arrastrelo aqui..."
+                                        accept="image/*" v-model="file1" :state="Boolean(file1)"
+                                        placeholder="Seleccione un fichero de imagen (jpg) o arrastrelo aqui..."
                                         drop-placeholder="Arrastre el fichero aqui..."></b-form-file>
                                     <div v-if="!!file1" class="mt-3">Archivo seleccionado: {{ file1 ? file1.name : '' }}
                                     </div>

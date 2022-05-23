@@ -34,12 +34,14 @@
             class: "text-left",
             sortable: true,
             sortDirection: "desc",
+            tdClass: "align-middle"
           },
           {
             key: "name",
             label: "Nombre",
             sortable: true,
             class: "text-left",
+            tdClass: "align-middle"
           },
           {
             key: "surname",
@@ -47,16 +49,19 @@
             class: "text-left",
             sortable: true,
             image: true,
+            tdClass: "align-middle"
           },
           {
             key: "address",
             label: "Dirección",
-              class: "text-left",
+            class: "text-left",
             sortable: true,
+            tdClass: "align-middle"
           },
           {
             key: "action",
             label: "",
+            tdClass: "align-middle"
           },
         ],
         params: "",

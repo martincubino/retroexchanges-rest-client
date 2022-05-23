@@ -3,7 +3,7 @@ export default {
     return state.products;
   },
   getProduct(state){
-    return state.products;
+    return state.product;
   }
   
 };

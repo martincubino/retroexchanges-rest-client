@@ -9,7 +9,7 @@
           <b-button variant="primary" class="mr-1" @click="editCategory(data)"> Editar </b-button>
         </template>
         <template v-slot:cell(image)="data">
-          <img v-if="data.item.image" :src="`data:image/png;base64,${data.item.image}`"  class="center" width="auto" height="80"/>
+          <img v-if="data.item.image" :src="`data:image/png;base64,${data.item.image}`"  class="center" width="auto" height="70"/>
         </template>
         <template v-slot:cell(createAt)="data">
           <span>{{ new Date(data.item.createAt).toLocaleString() }}</span>
@@ -45,46 +45,47 @@
         currentPage: 1,
         totalPages: 0,
         recordsPerPage: 5,
-        fields: [{
-            key: "categoryId",
-            label: "Id",
-            class: "text-left",
-            sortable: true,
-            sortDirection: "desc",
-          },
+        fields: [
           {
             key: "image",
             label: "",
             sortable: false,
-            image: true
+            class: "text-center",
+            image: true,
+            tdClass: "align-middle"
           },
           {
             key: "name",
             label: "Nombre",
             sortable: true,
             class: "text-left",
+            tdClass: "align-middle"
           },
           {
             key: "description",
             label: "Descripción",
             class: "text-left",
             sortable: true,
+            tdClass: "align-middle"
           },
           {
             key: "createAt",
             label: "Creada",
             class: "text-left",
             sortable: false,
+            tdClass: "align-middle"
           },
           {
             key: "updatedAt",
             label: "Actualizada",
             class: "text-left",
             sortable: false,
+            tdClass: "align-middle"
           },
           {
             key: "action",
             label: "",
+            tdClass: "align-middle"
           },
         ],
         params: "",

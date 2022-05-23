@@ -6,7 +6,7 @@
     <div>
       <b-table striped hover :items="listItems" :fields="fields" :current-page="currentPage" :per-page="5">
         <template v-slot:cell(action)="data">
-          <b-button variant="primary" class="mr-1" @click="editProduct(data)"> Editar </b-button>
+          <b-button variant="primary" class="mr-1" @click="showProduct(data)"> Detalle </b-button>
         </template>
         <template v-slot:cell(pictureList)="data">
           <img v-if="(data.item.pictureList.length>0)"
@@ -36,21 +36,13 @@
       <b-pagination v-model="currentPage" :total-rows="totalPages" :per-page="recordsPerPage">
       </b-pagination>
     </div>
-    <br>
-    <p align="left">
-      <b-button class="aling-left" variant="outline-primary" @click="newProduct(data)">Nuevo videojuego</b-button>
-    </p>
-    <b-modal size="lg" @hide="loadProducts" centered ref="modalProduct" v-bind:title=this.modalTitle hide-footer>
-      <ProductView :id="this.productId" :new="(this.modalTitle=='Nuevo videojuego')" />
-    </b-modal>
   </div>
 </template>
 
 <script>
-  import ProductView from '@/views/ProductView.vue'
+
   export default {
     components: {
-      ProductView
     },
     data() {
       return {
@@ -170,11 +162,10 @@
         this.isLoading = true;
         this.params = `page=${this.currentPage}&size=${this.recordsPerPage}`;
         try {
-          await this.$store.dispatch('product/loadProducts', {
-            type: 'user',
-            value: this.email
+          await this.$store.dispatch('favorite/loadFavorites', {
+            email: this.email
           });
-          this.listItems = this.$store.getters['product/getProducts'];
+          this.listItems=this.$store.getters['favorite/getFavorites'];
           this.totalPages = this.listItems.length;
           this.isLoading = false;
         } catch (error) {
@@ -186,15 +177,9 @@
         console.log(data);
         return data.name;
       },
-      editProduct(data) {
-        this.productId = data.item.productId;
-        this.modalTitle = "Editar videojuego";
-        this.$refs.modalProduct.show();
-      },
-      newProduct() {
-        this.productId = 0;
-        this.modalTitle = "Nuevo videojuego";
-        this.$refs.modalProduct.show();
+      showProduct(data) {
+          let routeData = this.$router.resolve({name: 'productDetail', query: {product: data.item.productId}});
+          window.open(routeData.href, '_blank');
       },
       handleError() {
         this.error = null;

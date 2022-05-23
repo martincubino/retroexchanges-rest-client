@@ -19,27 +19,45 @@
                     </b-progress>
                 </b-alert>
                 <b-row>
-                    <b-col cols="11">
-                        <b-form-group id="input-group-3" label="Imagen:" label-for="input-3">
+                    <b-col>
+                        <b-form-group id="input-group-3" label="Imagenes:" label-for="input-3">
                             <b-card>
-                                <div v-if="image">
-                                    <b-img center :src="`data:image/png;base64,${image}`" />
-                                    <b-button size="sm" class="float-right" variant="secondary" @click="removeImage()">
-                                        Borrar imagen</b-button>
+                                <div>
+                                    <b-table ref="tableImages" thead-class="hidden_header" responsive small borderless
+                                        :items="pictureList" :fields="fields">
+                                        <template v-slot:cell(action)="data">
+                                            <b-button v-if="data.item.picture" variant="primary" class="mr-1"
+                                                @click="removeImage(data)">
+                                                <font-awesome-icon icon="fa-solid fa-trash" size="xl" />&nbsp;
+                                            </b-button>
+                                        </template>
+                                        <template v-slot:cell(picture)="data">
+                                            <img v-if="data.item.picture"
+                                                :src="`data:image/png;base64,${data.item.picture}`" width="120" height="auto" />
+                                        </template>
+                                    </b-table>
+                                    <br>
+                                    
+                                    <b-form-file hidden size="sm" @change="onFileChange" browse-text="Buscar"
+                                         placeholder="Seleccione una imagen" accept="image/jpg" v-model="file1" >
+                                        <b-button size="sm" class="float-right" variant="secondary" @click="removeImage()">
+                                        Añadir imagen</b-button>
+                                        </b-form-file>
                                 </div>
-                                <div v-else>
-                                    <b-form-file size="sm" @change="onFileChange" browse-text="Buscar"
-                                        accept="image/png" v-model="file1" :state="Boolean(file1)"
-                                        placeholder="Seleccione un fichero de imagen (png) o arrastrelo aqui..."
-                                        drop-placeholder="Arrastre el fichero aqui..."></b-form-file>
-                                    <div v-if="!!file1" class="mt-3">Archivo seleccionado: {{ file1 ? file1.name : '' }}
-                                    </div>
-                                </div>
+
                             </b-card>
+                            <template>
+                                <b-badge v-if="this.status=='AVAILABLE'" variant="success">
+                                    {{getStatusLabel(this.status)}}</b-badge>
+                                <b-badge v-if="this.status=='RESERVED'" variant="warning">
+                                    {{getStatusLabel(this.status)}}</b-badge>
+                                <b-badge v-if="this.status=='SOLD'" variant="secondary">{{getStatusLabel(this.status)}}
+                                </b-badge>
+                            </template>
                             <br>
                         </b-form-group>
                     </b-col>
-                    <b-col cols="11">
+                    <b-col sm="7">
                         <b-form-group id="input-group-1" label="Nombre:" label-for="input-1">
                             <b-form-input id="input-1" v-model="name" type="text"
                                 placeholder="Introduzca el nombre del videojuego o consola" required>
@@ -50,19 +68,18 @@
                                 placeholder="Introduzca la descripción del videojuego o consola" required>
                             </b-form-textarea>
                         </b-form-group>
-                        <div>
-                            <b-form-select v-model="categoryId" :options="categories" text-field="name" value-field="categoryId" required ></b-form-select>
-                            <div class="mt-3">Selected: <strong>{{ selected }}</strong></div>
-                        </div>
-                    </b-col>
-                    <b-col cols="4">
-                        <b-form-group id="input-group-4" label="Precio:" label-for="input-4">
-                            <b-form-input id="input-4" v-model="price" type="number" placeholder="Introduzca el precio"
+                        <div>Categoría:</div>
+                        <b-form-select class="mt-2" id="input-4" v-model="categoryId" :options="categories"
+                            type="select" text-field="name" value-field="categoryId" required></b-form-select>
+
+                        <b-form-group class="mt-2" id="input-group-5" label="Precio:" label-for="input-5">
+                            <b-form-input id="input-5" v-model="price" type="number" placeholder="Introduzca el precio"
                                 required>
                             </b-form-input>
                         </b-form-group>
                     </b-col>
                 </b-row>
+
                 <div slot="modal-footer" class="w-100">
                     <br>
                     <p class="float-left"></p>
@@ -85,6 +102,21 @@
         components: {},
         data() {
             return {
+                fields: [{
+                        key: "picture",
+                        label: "",
+                        sortable: false,
+                        image: true,
+                        class: "text-center",
+                        tdClass: "align-middle"
+                    },
+                    {
+                        key: "action",
+                        label: "",
+                        class: "text-center",
+                        tdClass: "align-middle"
+                    },
+                ],
                 isLoading: false,
                 dismissSecs: 5,
                 dismissCountDown: 0,
@@ -97,10 +129,14 @@
                 price: null,
                 owner: null,
                 image: null,
+                category: null,
                 categoryId: null,
                 imageUploaded: null,
-                prod: null,
                 formIsValid: true,
+                files: [],
+                pictureList: [],
+                slide: 0,
+                sliding: null,
                 file1: null
             }
         },
@@ -125,6 +161,18 @@
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },
+            getStatusLabel(data) {
+                if (data == "AVAILABLE") {
+                    return "Disponible";
+                }
+                if (data == "RESERVED") {
+                    return "Reservado";
+                }
+                if (data == "SOLD") {
+                    return "Vendido";
+                }
+                return "";
+            },
             showAlert() {
                 this.dismissCountDown = this.dismissSecs
             },
@@ -139,14 +187,13 @@
                     description: this.description,
                     owner: this.owner,
                     price: this.price,
-                    categoryId: this.categoryId,
+                    category: this.categories.find(x => x.categoryId === this.categoryId),
+                    pictureList: this.pictureList,
                     status: this.status
                 }
-
                 if (this.new == false) {
                     try {
                         product.productId = this.productId;
-                        
                         await this.$store.dispatch('product/updateProduct', product);
                         //event.preventDefault()
                         this.showAlert();
@@ -154,7 +201,7 @@
                         this.error = error.message || 'No se pudo actualizar la información de la product';
                     }
                 } else {
-                    product.status="AVAILABLE";
+                    product.status = "AVAILABLE";
                     try {
                         await this.$store.dispatch('product/createProduct', product);
                         //event.preventDefault()
@@ -180,29 +227,55 @@
                 this.productId = product.productId;
                 this.owner = product.owner;
                 this.price = product.price;
-                this.categoryId = product.categoryId;
+                this.category = product.category;
+                this.categoryId = this.category.categoryId;
+                this.status = product.status;
+                this.pictureList = product.pictureList;
+                console.log(this.pictureList);
+
             },
             onFileChange(e) {
                 var files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
                     return;
                 this.file1 = files[0];
-                this.createImage(files[0]);
+                this.createImage(files[0],(image=>{
+                    let picture = {
+                        new: true,
+                        picture: image,
+                        productId: this.productId
+                    }
+                    if (typeof this.pictureList=="undefined"){
+                        this.pictureList = [];
+                    }
+                    this.pictureList.push(picture);
+                    this.$refs.tableImages.refresh();
+                }));
+                
             },
-            createImage(file) {
+            createImage(file,callback) {
                 var reader = new FileReader();
                 var vm = this;
 
                 reader.onload = (e) => {
                     vm.image = e.target.result;
+                    console.log(this.image);
                     let imageURI = this.image.split(',');
                     vm.image = imageURI[1];
+                    callback(vm.image);
 
                 };
                 reader.readAsDataURL(file);
             },
-            removeImage: function () {
-                this.image = '';
+            async removeImage(data) {
+                this.pictureList[data.index].picture = '';
+                this.$refs.tableImages.refresh();
+            },
+            onSlideStart(slide) {
+                this.slide = slide;
+            },
+            onSlideEnd(slide) {
+                this.slide = slide;
             },
             handleError() {
                 this.error = null;
@@ -217,5 +290,8 @@
             width: 90% !important;
             ;
         }
+    }
+    .hidden_header {
+        display: none;
     }
 </style>
