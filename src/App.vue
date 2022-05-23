@@ -11,15 +11,18 @@
           <b-nav-item :to="{name:'about'}">Acerca de...</b-nav-item>
         </b-navbar-nav>-->
         <b-navbar-nav class="md-auto">
-          <b-input-group class="shadow-lg">
-            <b-input-group-prepend is-text>
-              <b-icon icon="search"></b-icon>
-            </b-input-group-prepend>
-            <b-form-input type="search" placeholder="¿Qué estas buscando?"></b-form-input>
-          </b-input-group>
+
         </b-navbar-nav>
         <b-navbar-nav small class="ml-auto">
-          <b-nav-form>
+          <b-nav-form action="">
+            <b-input-group class="text-center shadow-lg" >
+              
+              <!--DESACTIVADA BARRA DE BUSQUEDA
+              <b-input-group-prepend is-text>
+                <b-icon icon="search"></b-icon>
+              </b-input-group-prepend>
+              <b-form-input  v-model="searchText" placeholder="¿Qué estas buscando?"></b-form-input>-->
+            </b-input-group>
             <b-nav-item class="text-center" :to="{name:'profile'}" exact>
               <p></p>
               <p v-if="isLoggedIn">
@@ -34,8 +37,8 @@
               <p v-else>
                 <b-icon icon="person"></b-icon><br>{{initSesionCaption}}
               </p>
-              </b-nav-item>
-              <b-nav-item class="text-center" v-if="isLoggedIn == false" :to="{name:'login'}" exact>
+            </b-nav-item>
+            <b-nav-item class="text-center" v-if="isLoggedIn == false" :to="{name:'login'}" exact>
               <p></p>
               <p v-if="isLoggedIn">
                 <b-icon icon="box-arrow-right"></b-icon><br>{{initSesionCaption}}
@@ -57,7 +60,8 @@
     components: {},
     data() {
       return {
-        error: null
+        error: null,
+        searchText: null
       }
     },
     computed: {
@@ -65,7 +69,7 @@
         return this.$store.getters.isAuthenticated;
       },
       getUserEmail() {
-          return this.$store.getters.email;
+        return this.$store.getters.email;
       },
       initSesionCaption() {
         if (this.isLoggedIn === false) {
@@ -74,6 +78,11 @@
           return 'Cerrar sesión';
         }
       },
+      methods: {
+        async onSubmit() {
+          console.log(this.searchText);
+        }
+      }
     }
   }
 </script>

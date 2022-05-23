@@ -36,6 +36,7 @@
                         </div>
                     </template>
                     <h1>Solicitudes de compra</h1>
+                    <BuyRequestListView />
                 </b-tab>
                 <b-tab>
                     <template #title>
@@ -92,6 +93,7 @@
     import CategoryListView from '@/views/CategoryListView.vue'
     import ProductListView from '@/views/ProductListView.vue'
     import FavoriteProductList from '@/views/FavoriteProductList.vue'
+    import BuyRequestListView from '@/views/BuyRequestListView.vue'
     
     export default {
         name: 'RetroExchanges',
@@ -100,7 +102,8 @@
             UserListView,
             CategoryListView,
             ProductListView,
-            FavoriteProductList
+            FavoriteProductList,
+            BuyRequestListView
         },
         data() {
             return {
