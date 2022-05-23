@@ -9,7 +9,8 @@
           <b-button variant="primary" class="mr-1" @click="editCategory(data)"> Editar </b-button>
         </template>
         <template v-slot:cell(image)="data">
-          <img v-if="data.item.image" :src="`data:image/png;base64,${data.item.image}`"  class="center" width="auto" height="70"/>
+          <img v-if="data.item.image" :src="`data:image/png;base64,${data.item.image}`" class="center" width="auto"
+            height="70" />
         </template>
         <template v-slot:cell(createAt)="data">
           <span>{{ new Date(data.item.createAt).toLocaleString() }}</span>
@@ -26,7 +27,7 @@
       <b-button class="aling-left" variant="outline-primary" @click="newCategory(data)">Nueva categoría</b-button>
     </p>
     <b-modal size="lg" @hide="loadCategories" centered ref="modalCategory" v-bind:title=this.modalTitle hide-footer>
-      <CategoryView :id="this.categoryId" :new="(this.modalTitle=='Nueva categoría')"/>
+      <CategoryView :id="this.categoryId" :new="(this.modalTitle=='Nueva categoría')" />
     </b-modal>
   </div>
 </template>
@@ -45,8 +46,7 @@
         currentPage: 1,
         totalPages: 0,
         recordsPerPage: 5,
-        fields: [
-          {
+        fields: [{
             key: "image",
             label: "",
             sortable: false,
@@ -102,12 +102,11 @@
       },
     },
     created() {
-      if (this.$store.getters.isAdmin) {
-        this.loadCategories();
-      } else {
+      if (!this.$store.getters.isAdmin) {
         const redirectUrl = '/' + (this.$route.query.redirect || 'login');
         this.$router.replace(redirectUrl);
       }
+      this.loadCategories();
     },
     watch: {
       currentPage: {
@@ -152,13 +151,13 @@
       },
       editCategory(data) {
         this.categoryId = data.item.categoryId;
-        this.modalTitle="Editar categoría";
+        this.modalTitle = "Editar categoría";
         console.log(this.categoryId);
         this.$refs.modalCategory.show();
       },
       newCategory() {
         this.categoryId = 0;
-        this.modalTitle="Nueva categoría";
+        this.modalTitle = "Nueva categoría";
         console.log(this.categoryId);
         this.$refs.modalCategory.show();
       },

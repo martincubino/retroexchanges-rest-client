@@ -6,8 +6,7 @@
     <div>
       <b-table striped hover :items="listItems" :fields="fields" :current-page="currentPage" :per-page="5">
         <template v-slot:cell(action)="data">
-          <b-button size="sm" class="mr-1" @click="edit(data)"> Edit </b-button>
-          <b-button size="sm" @click="deleteRecord(data)"> Delete </b-button>
+          <b-button size="sm" class="mr-1" @click="edit(data)"> Bloquear </b-button>
         </template>
       </b-table>
       <b-pagination v-model="currentPage" :total-rows="totalPages" :per-page="recordsPerPage">
@@ -101,28 +100,6 @@
           this.error = error.message || 'No se pudo cargar el listado de usuarios';
           this.isLoading = false;
         }
-      },
-      deleteRecord(data) {
-        this.$bvModal
-          .msgBoxConfirm("Are you sure wants to delete?", {
-            title: "Please Confirm",
-            size: "mm",
-            buttonSize: "sm",
-            okVariant: "danger",
-            okTitle: "YES",
-            cancelTitle: "NO",
-            footerClass: "p-2",
-            hideHeaderClose: false,
-            centered: true,
-          })
-          .then((value) => {
-            if (value) {
-              this.listItems.splice(data.index, 1);
-            }
-          });
-      },
-      edit(data) {
-        alert(JSON.stringify(data));
       },
       handleError() {
         this.error = null;
