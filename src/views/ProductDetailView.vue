@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-col>
-            <b-container class="carrousel">
+            <b-container align="center" class="p-3 carrousel">
                 <b-carousel style="text-shadow: 1px 1px 2px #333;" v-model="slide" id="carousel" :no-wrap="false"
                     :controls="true" :interval="5000" :indicators=true>
 
@@ -16,7 +16,7 @@
             <div v-if="isLoading">
                 <b-spinner>Cargando...</b-spinner>
             </div>
-            <br><br><br><br><br><br><br>
+            <br><br>
 
             <b-card class="md">
                 <b-col cols=4>
@@ -29,7 +29,9 @@
                             <font-awesome-icon icon="fa-solid fa-heart" />
                         </p>
                     </b-form-checkbox>
-
+                    <b-badge v-if="owner != email " variant="info">
+                        Puesto en venta por {{owner}}
+                    </b-badge>
                     <h5>{{price+'€'}}</h5>
                     <h6> {{name}}</h6>
                     <p> {{description}}</p>
@@ -45,6 +47,7 @@
                     <b-badge v-if="owner == email " variant="warning">
                         Eres el propietario
                     </b-badge>
+
                 </b-col>
             </b-card>
         </b-container>
@@ -168,7 +171,7 @@
                 this.isLoading = true;
                 try {
                     await this.$store.dispatch('product/loadProduct', this.id);
-                    
+
                 } catch (error) {
                     this.error = error.message || 'No se pudo recuperar la información del videojuego';
                 }
@@ -194,25 +197,25 @@
                 this.isLoading = true;
                 let favorite;
                 let fav = {
-                            productId : this.productId,
-                            email : this.email
-                        }
+                    productId: this.productId,
+                    email: this.email
+                }
                 try {
                     await this.$store.dispatch('favorite/loadFavorite', fav);
-                     favorite = this.$store.getters['favorite/getFavorite'];
+                    favorite = this.$store.getters['favorite/getFavorite'];
                 } catch (error) {
-                    console.log("No es favorito de "+this.email);
+                    console.log("No es favorito de " + this.email);
                 }
                 try {
                     await this.$store.dispatch('favorite/loadFavorites', fav);
                 } catch (error) {
-                    console.log("No es favorito de "+this.email);
+                    console.log("No es favorito de " + this.email);
                 }
                 this.isLoading = false;
                 console.log(favorite);
-                if (typeof favorite !="undefined"){
-                    this.favorite=true;
-                }else{
+                if (typeof favorite != "undefined") {
+                    this.favorite = true;
+                } else {
                     this.favorite = false;
                 }
 
@@ -220,16 +223,16 @@
             async setFavorite(state) {
                 console.log(state);
                 let favorite = {
-                            productId : this.productId,
-                            email : this.email
-                        }
-                if (state==true){
-                  try {
+                    productId: this.productId,
+                    email: this.email
+                }
+                if (state == true) {
+                    try {
                         await this.$store.dispatch('favorite/createFavorite', favorite);
                     } catch (error) {
                         console.log(error);
-                    }   
-                }else{
+                    }
+                } else {
                     try {
                         await this.$store.dispatch('favorite/deleteFavorite', favorite);
                     } catch (error) {
