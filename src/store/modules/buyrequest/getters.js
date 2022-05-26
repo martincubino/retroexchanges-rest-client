@@ -1,9 +1,12 @@
 export default {
-  getBuyRequests(state) {
-    return state.buyrequests;
+  getBuyRequestsInbox(state) {
+    return state.buyrequestsInbox;
   },
   getBuyRequest(state){
     return state.buyrequest;
-  }
+  },
+  getBuyRequestsOutbox(state) {
+    return state.buyrequestsOutbox;
+  },
   
 };

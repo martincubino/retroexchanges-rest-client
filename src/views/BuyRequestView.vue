@@ -139,7 +139,6 @@
                 try {
                     await this.$store.dispatch('buyrequest/createBuyRequest', buyrequest);
                     this.showAlert();
-                    parent.$refs.modalBuyRequest.hide();
                 } catch (error) {
                     this.error = error.message || 'No se pudo actualizar la información de la product';
                 }

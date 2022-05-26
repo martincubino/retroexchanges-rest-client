@@ -15,16 +15,19 @@
 
         </template>
         <template v-slot:cell(category)="data">
-          <span>{{ getCategoryName(data.item.category) }}</span>
+          <span><small>{{ getCategoryName(data.item.category) }}</small></span>
         </template>
-        <template v-slot:cell(createAt)="data">
-          <span>{{ new Date(data.item.createAt).toLocaleString() }}</span>
+        <template v-slot:cell(name)="data">
+          <span><small>{{ data.item.name }}</small></span>
+        </template>
+        <template v-slot:cell(description)="data">
+          <span><small>{{ data.item.description }}</small></span>
         </template>
         <template v-slot:cell(updatedAt)="data">
-          <span>{{ new Date(data.item.updatedAt).toLocaleString() }}</span>
+          <span><small>{{ new Date(data.item.updatedAt).toLocaleString() }}</small></span>
         </template>
         <template v-slot:cell(price)="data">
-          <span> {{data.item.price+'€'}}</span>
+          <span><small>{{data.item.price+'€'}}</small></span>
         </template>
         <template v-slot:cell(status)="data">
           <b-badge v-if="data.item.status=='AVAILABLE'" variant="success">{{getStatusLabel(data.item.status)}}</b-badge>
@@ -106,13 +109,7 @@
             sortable: true,
             tdClass: "align-middle"
           },
-          {
-            key: "createAt",
-            label: "Creado",
-            class: "text-left",
-            sortable: false,
-            tdClass: "align-middle"
-          },
+
           {
             key: "updatedAt",
             label: "Actualizado",

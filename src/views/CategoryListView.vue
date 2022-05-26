@@ -12,11 +12,17 @@
           <img v-if="data.item.image" :src="`data:image/png;base64,${data.item.image}`" class="center" width="auto"
             height="70" />
         </template>
+        <template v-slot:cell(name)="data">
+          <span><small>{{data.item.name}}</small></span>
+        </template>
+        <template v-slot:cell(description)="data">
+          <span><small>{{data.item.description}}</small></span>
+        </template>
         <template v-slot:cell(createAt)="data">
-          <span>{{ new Date(data.item.createAt).toLocaleString() }}</span>
+          <span><small>{{ new Date(data.item.createAt).toLocaleString() }}</small></span>
         </template>
         <template v-slot:cell(updatedAt)="data">
-          <span>{{ new Date(data.item.updatedAt).toLocaleString() }}</span>
+          <span><small>{{ new Date(data.item.updatedAt).toLocaleString() }}</small></span>
         </template>
       </b-table>
       <b-pagination v-model="currentPage" :total-rows="totalPages" :per-page="recordsPerPage">

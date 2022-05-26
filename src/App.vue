@@ -77,11 +77,6 @@
         } else {
           return 'Cerrar sesión';
         }
-      },
-      methods: {
-        async onSubmit() {
-          console.log(this.searchText);
-        }
       }
     }
   }

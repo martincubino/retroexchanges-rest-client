@@ -192,7 +192,12 @@ export default {
       buyrequest.id = key;
       buyrequests.push(buyrequest);
     }
-    context.commit('setBuyRequests', buyrequests);
+    if (payload.type==="seller"){
+     context.commit('setBuyRequestsInbox', buyrequests);
+    }
+    if (payload.type==="buyer"){
+      context.commit('setBuyRequestsOutbox', buyrequests);
+     }
     context.commit('setFetchTimestamp');
   }
 };

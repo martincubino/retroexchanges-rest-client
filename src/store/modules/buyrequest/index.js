@@ -8,7 +8,10 @@ export default {
     return {
       lastFetch:null,
       buyrequest: null,
-      buyrequests: []
+      buyrequestsInbox: [],
+      buyrequestsOutbox: []
+
+
     };
   },
   mutations,
