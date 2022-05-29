@@ -39,15 +39,13 @@ export default {
       email: responseData.email,
       nif: responseData.nif,
       address: responseData.address,
-      isAdmin: responseData.isAdmin,
-      status: responseData.status,
-      password: responseData.password
+      status:responseData.status,
     });
   },
   async updateUser(context, payload) {
     
     const token = context.rootGetters.token;
-    const email = context.rootGetters.email;
+    const email = payload.email;
 
     const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/user/${email}`, {
       method: 'PUT',
@@ -83,9 +81,7 @@ export default {
       email: responseData.email,
       nif: responseData.nif,
       address: responseData.address,
-      isAdmin: responseData.isAdmin,
-      status: responseData.status,
-      password: responseData.password
+      status: responseData.status
     });
   },
   async getUserLocation(context, payload) {
@@ -181,7 +177,8 @@ export default {
         nif: responseData[key].nif,
         address: responseData[key].address,
         isAdmin: responseData[key].isAdmin,
-        status: responseData[key].status
+        status: responseData[key].status,
+        rating: responseData[key].rating
       };
       users.push(user);
     }

@@ -32,10 +32,7 @@ export default {
       throw error;
     }
 
-    context.commit('setRating', {
-      email: responseData.email,
-      rating: responseData.rating
-    });
+    context.commit('setRating', responseData);
   },
   async createRating(context, payload) {
     
@@ -73,13 +70,14 @@ export default {
       throw error;
     }
 
-    context.commit('setBuyRequest', responseData);
+    context.commit('setRating', responseData);
   },
  
+  
   async loadRatings(context, payload) {
 
     const token = context.rootGetters.token;
-    let getUrl = `${process.env.VUE_APP_API_REST_BASE_URL}/requests/${payload.email}`
+    let getUrl = `${process.env.VUE_APP_API_REST_BASE_URL}/ratings/${payload.type}/${payload.value}`
 
     const response = await fetch(getUrl, {
       method: 'GET',
@@ -115,7 +113,12 @@ export default {
       rating.id = key;
       ratings.push(rating);
     }
-    context.commit('setRatings', ratings);
+    if (payload.type=="sent"){
+      context.commit('setRatingsSent', ratings);
+    }
+    if (payload.type=="received"){
+      context.commit('setRatingsReceived', ratings);
+    }
     context.commit('setFetchTimestamp');
   }
 };

@@ -59,6 +59,7 @@
                         </div>
                     </template>
                     <h1>Valoraciones</h1>
+                    <RatingsListView />
                 </b-tab>
                 <b-tab v-if="isAdmin">
                     <template #title>
@@ -94,6 +95,7 @@
     import ProductListView from '@/views/ProductListView.vue'
     import FavoriteProductList from '@/views/FavoriteProductList.vue'
     import BuyRequestListView from '@/views/BuyRequestListView.vue'
+    import RatingsListView from '@/views/RatingsListView.vue'
     
     export default {
         name: 'RetroExchanges',
@@ -103,7 +105,8 @@
             CategoryListView,
             ProductListView,
             FavoriteProductList,
-            BuyRequestListView
+            BuyRequestListView,
+            RatingsListView
         },
         data() {
             return {

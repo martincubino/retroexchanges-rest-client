@@ -18,32 +18,35 @@
                     <b-progress variant="success" :max="dismissSecs" :value="dismissCountDown" height="4px">
                     </b-progress>
                 </b-alert>
-                <h5> {{product.name}}</h5>
+                <template v-if="this.requestType=='compra'">
+                <h5> {{request.buyer.name}} {{request.buyer.surname}} ({{request.buyer.email}})</h5>
+                <h5> por la compra de </h5>
+                <br>
                 <p> {{product.description}}</p>
-                <h6>Puesto en venta por {{product.owner}}</h6>
-                <h6>Al precio de {{product.price+'€'}}</h6>
-
-
-                <b-badge v-if="product.status=='AVAILABLE'" variant="success">
-                    Disponible
-                </b-badge>
-                <b-badge v-if="product.status=='RESERVED'" variant="warning">
-                    Reservado
-                </b-badge>
-                <b-badge v-if="product.status=='SOLD'" variant="secondary">
-                    Vendido
-                </b-badge>
-                <b-form-group class="mt-2" id="input-group-5" label="Hacer oferta:" label-for="input-5">
-                    <b-form-input id="input-5" v-model="price" type="number" placeholder="Introduzca el precio"
-                        required>
-                    </b-form-input>
-                </b-form-group>
-
+                <h6>Al precio de {{request.price+'€'}}</h6>
+                <br>
+                </template>
+                <template v-if="this.requestType=='venta'">
+                <h5> {{request.seller.name}} {{request.seller.surname}} ({{request.seller.email}})</h5>
+                <h5> por la venta de </h5>
+                <br>
+                <p> {{product.description}}</p>
+                <h6>Al precio de {{request.price+'€'}}</h6>
+                <br>
+                </template>
+                <template>
+                    <div>
+                        <p class="mt-2">Valoración: {{ rating }}</p>
+                        <b-form-rating size="lg" icon-empty="hand-thumbs-up" icon-full="hand-thumbs-up-fill"
+                             show-clear show-value color="blue" v-model="rating">
+                        </b-form-rating>
+                    </div>
+                </template>
                 <div slot="modal-footer" class="w-100">
                     <br>
                     <p class="float-left"></p>
-                    <b-button  size="mt-2 md mr-2" class="float-right" variant="primary" @click="onSubmit">
-                        Enviar
+                    <b-button size="mt-2 md mr-2" class="float-right" variant="primary" @click="onSubmit">
+                        Votar
                     </b-button>
                 </div>
 
@@ -55,10 +58,8 @@
 <script>
     export default {
         props: {
-            product: Object,
-            seller: String,
-            buyer: String,
-            new: Boolean
+            request: Object,
+            requestType: String
         },
         components: {},
         data() {
@@ -68,17 +69,10 @@
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
                 formFormatWarning: null,
-                categories: [],
                 error: null,
-                name: null,
-                description: null,
-                price: null,
-                owner: null,
-                image: null,
-                category: null,
-                categoryId: null,
-                imageUploaded: null,
                 formIsValid: true,
+                product: this.request.product,
+                rating:null
             }
         },
         computed: {
@@ -104,7 +98,7 @@
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
                 if(this.dismissCountDown==0){
-                    this.$root.$emit('bv::hide::modal','modalBuyRequest');
+                    this.$root.$emit('bv::hide::modal','modalRating');
                 }
             },
             getStatusLabel(data) {
@@ -129,20 +123,31 @@
             async onSubmit() {
                 this.handleError();
 
-                let buyrequest = {
-                    buyer: this.email,
-                    seller: this.product.owner,
-                    productId: this.product.productId,
-                    price: this.price,
-                    status: this.status
-                };
+                let rating = {};
+                if (this.requestType == "compra") {
+                    rating = {
+                        userRated: this.request.buyer.email,
+                        userWhoRate: this.request.seller.email,
+                        buyRequestId: this.request.requestId,
+                        rating: this.rating
+                    }
+                }
+                if (this.requestType == "venta") {
+                    rating = {
+                        userRated: this.request.seller.email,
+                        userWhoRate: this.request.buyer.email,
+                        buyRequestId: this.request.requestId,
+                        rating: this.rating
+                    }
+                }
+
                 try {
-                    await this.$store.dispatch('buyrequest/createBuyRequest', buyrequest);
+                    await this.$store.dispatch('rating/createRating', rating);
                     this.showAlert();
                 } catch (error) {
                     this.error = error.message || 'No se pudo actualizar la información de la product';
                 }
-                
+
             },
             async loadProduct() {
                 this.isLoading = true;
@@ -179,6 +184,7 @@
             ;
         }
     }
+
     .hidden_header {
         display: none;
     }

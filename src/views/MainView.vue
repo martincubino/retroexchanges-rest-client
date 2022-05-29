@@ -1,24 +1,27 @@
 <template>
-    <div class="mt-5">
+    <div>
         <b-alert :show="!!error" dismissible fade variant="danger">
             <p>{{ error }}</p>
         </b-alert>
         <div>
-            <b-container>
+            <b-container fluid>
+                
+                <b-form-select class="mt-2" id="input-1" v-model="categoryId" :options="categories" type="select"
+                    text-field="name" value-field="categoryId" @change="filterProducts()" required></b-form-select>
+
                 <b-table striped hover :items="listItems" :fields="fields" :current-page="currentPage" :per-page="2">
                     <template v-slot:cell(action)="data">
                         <b-button variant="info" class="mr-1" @click="showProduct(data)"> Mas información </b-button>
                     </template>
 
                     <template v-slot:cell(pictureList)="data">
-                        <b-card img-height="240" img-width="120" class="text-center position-relative">
+                        <b-card img-height="250" img-width="320" class="text-center position-relative">
                             <b-img v-if="(data.item.pictureList.length>0)"
-                                :src="`data:image/png;base64,${data.item.pictureList[0].picture}`" width="320"
-                                height="260" />
+                                :src="`data:image/png;base64,${data.item.pictureList[0].picture}`" width="auto"
+                                height="250" />
                             <b-img v-else :src="`data:image/png;base64,${noimage}`" width="120" height="auto" />
                         </b-card>
                     </template>
-
                     <template v-slot:cell(category)="data">
                         <p v-if="data.item.category">{{ data.item.category.name }}</p>
                     </template>
@@ -56,7 +59,7 @@
                 </b-pagination>
             </b-container>
         </div>
-        <b-modal size="xl" @hide="loadProducts" centered ref="modalProduct" v-bind:title=this.modalTitle hide-footer>
+        <b-modal size="xl" @hide="loadProducts" centered id="modalProduct" v-bind:title=this.modalTitle hide-footer>
             <ProductDetailView :id="this.productId" />
         </b-modal>
 
@@ -72,10 +75,12 @@
         },
         data() {
             return {
+                categoryId: null,
                 email: '',
                 isLoading: false,
                 error: null,
                 listItems: [],
+                categories: [],
                 currentPage: 1,
                 totalPages: 0,
                 recordsPerPage: 2,
@@ -138,7 +143,7 @@
                 this.isAdmin = this.$store.getters;
             }
             this.loadCategories();
-            
+
         },
         watch: {
             currentPage: {
@@ -149,9 +154,32 @@
             },
         },
         methods: {
+            async filterProducts(){
+                this.handleError();
+                if (this.categoryId!=null){
+                let params = {
+                    type: 'category',
+                    value: this.categoryId
+                }
+                this.loadProducts(params);
+                }else{
+                    this.loadProducts();
+                }
+            },
             async loadCategories() {
                 try {
                     await this.$store.dispatch('category/loadCategories');
+                    this.categories = this.$store.getters['category/getCategories'];
+                    let c = {
+                        categoryId: null,
+                        createAt: null,
+                        description: null,
+                        id: null,
+                        image: 'null',
+                        name: 'Todas las categorías',
+                        updatedAt: null
+                    }
+                    this.categories.unshift(c);
                     this.loadProducts();
                 } catch (error) {
                     console.log(error);
@@ -169,11 +197,12 @@
                 }
                 return "";
             },
-            async loadProducts() {
+            async loadProducts(params) {
                 this.isLoading = true;
                 this.params = `page=${this.currentPage}&size=${this.recordsPerPage}`;
+
                 try {
-                    await this.$store.dispatch('product/loadProducts');
+                    await this.$store.dispatch('product/loadProducts',params);
                     this.listItems = this.$store.getters['product/getProducts'];
                     this.totalPages = this.listItems.length;
                     this.isLoading = false;
@@ -198,13 +227,4 @@
     }
 </script>
 <style>
-    .carousel-inner>.item>img,
-    .carousel-inner>.item>a>img {
-        width: 100%;
-    }
-
-    .carousel {
-        width: 200px;
-        height: auto
-    }
 </style>

@@ -1,8 +1,8 @@
 
 export default {
-  async loadRequest(context, payload) {
+  async loadBuyRequest(context, payload) {
     const token = context.rootGetters.token;
-    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/favorite/${payload.productId}`, {
+    const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/request/${payload}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -22,7 +22,7 @@ export default {
           error_message = 'Fallo de autenticación. Revise los datos introducidos.';
           break;
         case 404:
-          error_message = 'Producto o usuario no econtrado .';
+          error_message = 'Solicitud de compra o usuario no econtrado .';
           break;
         default:
           error_message = 'Fallo al intentar obtener los datos. Intentelo de nuevo mas tarde.';
@@ -32,12 +32,7 @@ export default {
       throw error;
     }
 
-    context.commit('setFavorite', {
-      email: responseData.userProduct.email,
-      productId: responseData.userProduct.productId,
-      user: responseData.user,
-      product: responseData.product
-    });
+    context.commit('setBuyRequest', responseData);
   },
   async createBuyRequest(context, payload) {
     
@@ -188,8 +183,28 @@ export default {
     const buyrequests = [];
 
     for (const key in responseData) {
-      let buyrequest = responseData[key];
+      let buyrequest = {};
+      
       buyrequest.id = key;
+      buyrequest.requestId = responseData[key].requestId;
+      buyrequest.createAt = responseData[key].createAt;
+      buyrequest.updatedAt = responseData[key].updatedAt;
+      buyrequest.price = responseData[key].price;
+      buyrequest.product = responseData[key].product;
+      buyrequest.ratings = responseData[key].ratings;
+      buyrequest.status = responseData[key].status;
+      buyrequest.buyer={
+        email:responseData[key].buyer.email,
+        name:responseData[key].buyer.name,
+        surname:responseData[key].buyer.surname,
+        rating:responseData[key].buyer.rating
+      }
+      buyrequest.seller={
+        email:responseData[key].seller.email,
+        name:responseData[key].seller.name,
+        surname:responseData[key].seller.surname,
+        rating:responseData[key].seller.rating
+      }
       buyrequests.push(buyrequest);
     }
     if (payload.type==="seller"){
