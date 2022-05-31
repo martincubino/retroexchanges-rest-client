@@ -11,7 +11,6 @@ export default {
     isAdmin(state) {
         try {
             state.isAdmin = JSON.parse(localStorage.getItem('auth')).isAdmin;
-
         } catch (e) {
             console.log(e.message)
         }

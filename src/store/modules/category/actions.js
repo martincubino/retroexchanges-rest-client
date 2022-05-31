@@ -11,7 +11,7 @@ export default {
 
     }).catch(e => {
       let error_message = 'Fallo de autenticación. Intentelo de nuevo mas tarde.';
-      console.log(e.message);
+      error_message += e.message;
       const error = new Error(error_message);
       throw error;
     });
@@ -57,7 +57,7 @@ export default {
       }
     }).catch(e => {
       let error_message = 'Fallo de autenticación. Intentelo de nuevo mas tarde.';
-      console.log(e.message);
+      error_message += e.message;
       const error = new Error(error_message);
       throw error;
     });
@@ -92,20 +92,20 @@ export default {
   },
   async createCategory(context, payload) {
     const token = context.rootGetters.token;
-    
-    let uri = process.env.VUE_APP_API_REST_BASE_URL+"/category";
-    
+
+    let uri = process.env.VUE_APP_API_REST_BASE_URL + "/category";
+
     const response = await fetch(uri, {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: new Headers({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
-        
+
       })
     }).catch(e => {
       let error_message = 'Fallo de autenticación. Intentelo de nuevo mas tarde.';
-      console.log(e.message);
+      error_message += e.message;
       const error = new Error(error_message);
       throw error;
     });
@@ -134,10 +134,8 @@ export default {
       updatedAt: responseData.updatedAt,
     });
   },
-  async loadCategories(context,payload) {
+  async loadCategories(context) {
 
-    console.log(payload);
-    
     const response = await fetch(`${process.env.VUE_APP_API_REST_BASE_URL}/categories`, {
       method: 'GET',
       headers: {

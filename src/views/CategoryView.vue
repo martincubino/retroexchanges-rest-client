@@ -75,7 +75,7 @@
         data() {
             return {
                 isLoading: false,
-                dismissSecs: 5,
+                dismissSecs: 3,
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
                 formFormatWarning: null,
@@ -106,7 +106,10 @@
         },
         methods: {
             countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
+                this.dismissCountDown = dismissCountDown;
+                if(this.dismissCountDown ==0){
+                    this.$root.$emit('bv::hide::modal','modalCategory');
+                }
             },
             showAlert() {
                 this.dismissCountDown = this.dismissSecs
@@ -171,7 +174,6 @@
 
                 reader.onload = (e) => {
                     vm.image = e.target.result;
-                    console.log(this.image);
                     let imageURI = this.image.split(',');
                     vm.image = imageURI[1];
 

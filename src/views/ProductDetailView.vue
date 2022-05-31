@@ -4,9 +4,10 @@
             <b-container align="center" class="p-3 carrousel">
                 <b-carousel style="text-shadow: 1px 1px 2px #333;" v-model="slide" id="carousel" :no-wrap="false"
                     :controls="true" :interval="5000" :indicators=true>
-
-                    <b-carousel-slide v-for="item in pictureList" :key="item.picture" class=".img_slide"
-                        :img-src="`data:image/png;base64,${item.picture}`">
+                    <b-carousel-slide v-for="item in pictureList" :key="item.picture">
+                        <b-img v-if="item.picture" :src="`data:image/png;base64,${item.picture}`" width="auto"
+                            height="330" />
+                        <b-img v-else :src="`data:image/png;base64,${noimage}`" width="auto" height="330" />
                     </b-carousel-slide>
                 </b-carousel>
 
@@ -17,7 +18,6 @@
                 <b-spinner>Cargando...</b-spinner>
             </div>
             <br><br>
-
             <b-card class="md">
                 <b-col cols=8>
                     <b-badge v-if="owner == email " variant="warning">
@@ -40,13 +40,13 @@
                             Puesto en venta por:
                         </b-badge>
                     </p>
-                    <p v-if="rating>-1">
-                            {{owner}} ({{rating}}
+                    <p v-if="rating">
+                        {{owner}} ({{valueToFixed(rating)}}
                         <font-awesome-icon style="color:blue" icon="fa-solid fa-thumbs-up" />&nbsp;)
-                        </p>
-                    <br>
-                    <h5>{{price+'€'}}</h5>
-                    <h6> {{name}}</h6>
+                    </p>
+                    <h6>
+                        <h5>{{price+'€'}}</h5> {{name}}
+                    </h6>
                     <p> {{description}}</p>
                     <b-badge v-if="status=='AVAILABLE'" variant="success">
                         Disponible
@@ -55,28 +55,24 @@
                         Reservado. No puedes solicitar su compra
                     </b-badge>
                     <p v-if="owner != email ">
-                    <b-badge v-if="status=='SOLD'" variant="secondary">
-                        Vendido. No puedes solicitar su compra
-                    </b-badge>
+                        <b-badge v-if="status=='SOLD'" variant="secondary">
+                            Vendido. No puedes solicitar su compra
+                        </b-badge>
                     </p>
-                    
                 </b-col>
-                <div v-if="status=='AVAILABLE'">
-                    <b-button v-if="isLoggedIn" class="mt-4 ml-3" variant="primary" @click="newBuyRequest(data)">
+                <div v-if="(status=='AVAILABLE')&&(owner != email)">
+                    <b-button v-if="(isLoggedIn)" class="float-right mt-4 ml-3" variant="primary"
+                        @click="newBuyRequest(data)">
                         Solicitar compra</b-button>
                 </div>
                 <div v-else>
-                    <b-button v-if="isLoggedIn" class="mt-4 ml-3" variant="primary" @click="goHome()">
+                    <b-button v-if="isLoggedIn" class="float-right mt-4 ml-3" variant="primary" @click="goHome()">
                         Seguir buscando</b-button>
-
-
                 </div>
-
-
             </b-card>
         </b-container>
-        <b-modal size="lg" centered ref="modalBuyRequest" v-bind:title=this.modalTitle hide-footer>
-            <BuyRequestView :parent="this.parent" :buyer="this.email" :seller="this.owner" :product="this.product"
+        <b-modal size="lg" centered id="modalBuyRequest" v-bind:title=this.modalTitle hide-footer>
+            <BuyRequestView :buyer="this.email" :seller="this.owner" :product="this.product"
                 :new="(this.modalTitle=='Nueva solicitud de compra')" />
         </b-modal>
     </div>
@@ -106,7 +102,7 @@
                     },
                 ],
                 isLoading: false,
-                dismissSecs: 5,
+                dismissSecs: 3,
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
                 formFormatWarning: null,
@@ -259,9 +255,20 @@
             },
             newBuyRequest() {
                 this.productId = 0;
-                this.parent = this;
                 this.modalTitle = "Nueva solicitud de compra";
-                this.$refs.modalBuyRequest.show();
+                this.$bvModal.show('modalBuyRequest');
+
+            },
+            valueToFixed(data) {
+                let fixedValue = 0;
+                try {
+                    if (!isNaN(data)) {
+                        fixedValue = data.toFixed(1);
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+                return fixedValue;
             },
             handleError() {
                 this.error = null;

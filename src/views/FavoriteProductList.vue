@@ -1,12 +1,13 @@
 <template>
-  <div class="mt-5">
+  <b-container fluid>
+  <div class="mt-5" >
     <b-alert :show="!!error" dismissible fade variant="danger">
       <p>{{ error }}</p>
     </b-alert>
     <div>
-      <b-table striped hover :items="listItems" :fields="fields" :current-page="currentPage" :per-page="5">
+      <b-table table-class="h-auto w-auto " fluid striped hover :items="listItems" :fields="fields" :current-page="currentPage" :per-page="5">
         <template v-slot:cell(action)="data">
-          <b-button variant="primary" class="mr-1" @click="showProduct(data)"> Detalle </b-button>
+          <b-button variant="primary" size="sm" class="mr-1" @click="showProduct(data)"> Detalle </b-button>
         </template>
         <template v-slot:cell(pictureList)="data">
           <img v-if="(data.item.pictureList.length>0)"
@@ -15,17 +16,21 @@
 
         </template>
         <template v-slot:cell(category)="data">
-          <span>{{ getCategoryName(data.item.category) }}</span>
-        </template>
-        <template v-slot:cell(createAt)="data">
-          <span>{{ new Date(data.item.createAt).toLocaleString() }}</span>
+          <span><small>{{ getCategoryName(data.item.category)}}</small></span>
         </template>
         <template v-slot:cell(updatedAt)="data">
-          <span>{{ new Date(data.item.updatedAt).toLocaleString() }}</span>
+          <span><small>{{ new Date(data.item.updatedAt).toLocaleString() }}</small></span>
         </template>
         <template v-slot:cell(price)="data">
-          <span> {{data.item.price+'€'}}</span>
+          <span><small>{{data.item.price+'€'}}</small></span>
         </template>
+        <template v-slot:cell(description)="data">
+          <span><small>{{data.item.description}}</small></span>
+        </template>
+        <template v-slot:cell(name)="data">
+          <span><small>{{data.item.name}}</small></span>
+        </template>
+
         <template v-slot:cell(status)="data">
           <b-badge v-if="data.item.status=='AVAILABLE'" variant="success">{{getStatusLabel(data.item.status)}}</b-badge>
           <b-badge v-if="data.item.status=='RESERVED'" variant="warning">{{getStatusLabel(data.item.status)}}</b-badge>
@@ -37,6 +42,7 @@
       </b-pagination>
     </div>
   </div>
+  </b-container>
 </template>
 
 <script>
@@ -96,13 +102,6 @@
             label: "Estado",
             class: "text-left",
             sortable: true,
-            tdClass: "align-middle"
-          },
-          {
-            key: "createAt",
-            label: "Creado",
-            class: "text-left",
-            sortable: false,
             tdClass: "align-middle"
           },
           {
@@ -174,7 +173,6 @@
         }
       },
       getCategoryName(data){
-        console.log(data);
         return data.name;
       },
       showProduct(data) {

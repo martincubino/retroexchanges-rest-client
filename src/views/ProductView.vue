@@ -46,7 +46,7 @@
                                 </div>
 
                             </b-card>
-                            <template>
+                            <template v-if="this.status!=null">
                                 <b-badge v-if="this.status=='AVAILABLE'" variant="success">
                                     {{getStatusLabel(this.status)}}</b-badge>
                                 <b-badge v-if="this.status=='RESERVED'" variant="warning">
@@ -118,7 +118,7 @@
                     },
                 ],
                 isLoading: false,
-                dismissSecs: 5,
+                dismissSecs: 3,
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
                 formFormatWarning: null,
@@ -137,7 +137,8 @@
                 pictureList: [],
                 slide: 0,
                 sliding: null,
-                file1: null
+                file1: null,
+                status: null
             }
         },
         computed: {
@@ -160,6 +161,9 @@
         methods: {
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
+                if(this.dismissCountDown ==0){
+                    this.$root.$emit('bv::hide::modal','modalProduct');
+                }
             },
             getStatusLabel(data) {
                 if (data == "AVAILABLE") {
@@ -195,8 +199,8 @@
                     try {
                         product.productId = this.productId;
                         await this.$store.dispatch('product/updateProduct', product);
-                        //event.preventDefault()
                         this.showAlert();
+                        this.$parent.$emit('closeMe');
                     } catch (error) {
                         this.error = error.message || 'No se pudo actualizar la información de la product';
                     }
@@ -204,8 +208,9 @@
                     product.status = "AVAILABLE";
                     try {
                         await this.$store.dispatch('product/createProduct', product);
-                        //event.preventDefault()
+
                         this.showAlert();
+
                     } catch (error) {
                         this.error = error.message || 'No se pudo recuperar la información de la categoria';
                     }
@@ -231,7 +236,6 @@
                 this.categoryId = this.category.categoryId;
                 this.status = product.status;
                 this.pictureList = product.pictureList;
-                console.log(this.pictureList);
 
             },
             onFileChange(e) {
@@ -259,7 +263,6 @@
 
                 reader.onload = (e) => {
                     vm.image = e.target.result;
-                    console.log(this.image);
                     let imageURI = this.image.split(',');
                     vm.image = imageURI[1];
                     callback(vm.image);

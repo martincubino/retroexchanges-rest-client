@@ -8,7 +8,8 @@ export default {
     return {
       lastFetch:null,
       rating: null,
-      ratings: []
+      ratingsReceived: [],
+      ratingsSent: []
     };
   },
   mutations,

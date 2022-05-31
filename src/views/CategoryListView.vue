@@ -1,4 +1,5 @@
 <template>
+<b-container fluid>
   <div class="mt-5">
     <b-alert :show="!!error" dismissible fade variant="danger">
       <p>{{ error }}</p>
@@ -6,17 +7,23 @@
     <div>
       <b-table striped hover :items="listItems" :fields="fields" :current-page="currentPage" :per-page="5">
         <template v-slot:cell(action)="data">
-          <b-button variant="primary" class="mr-1" @click="editCategory(data)"> Editar </b-button>
+          <b-button variant="primary" size="sm" class="mr-1" @click="editCategory(data)"> Editar </b-button>
         </template>
         <template v-slot:cell(image)="data">
           <img v-if="data.item.image" :src="`data:image/png;base64,${data.item.image}`" class="center" width="auto"
             height="70" />
         </template>
+        <template v-slot:cell(name)="data">
+          <span><small>{{data.item.name}}</small></span>
+        </template>
+        <template v-slot:cell(description)="data">
+          <span><small>{{data.item.description}}</small></span>
+        </template>
         <template v-slot:cell(createAt)="data">
-          <span>{{ new Date(data.item.createAt).toLocaleString() }}</span>
+          <span><small>{{ new Date(data.item.createAt).toLocaleString() }}</small></span>
         </template>
         <template v-slot:cell(updatedAt)="data">
-          <span>{{ new Date(data.item.updatedAt).toLocaleString() }}</span>
+          <span><small>{{ new Date(data.item.updatedAt).toLocaleString() }}</small></span>
         </template>
       </b-table>
       <b-pagination v-model="currentPage" :total-rows="totalPages" :per-page="recordsPerPage">
@@ -26,10 +33,11 @@
     <p align="left">
       <b-button class="aling-left" variant="outline-primary" @click="newCategory(data)">Nueva categoría</b-button>
     </p>
-    <b-modal size="lg" @hide="loadCategories" centered ref="modalCategory" v-bind:title=this.modalTitle hide-footer>
+    <b-modal size="lg" @hide="loadCategories"  centered id="modalCategory"  v-bind:title=this.modalTitle hide-footer>
       <CategoryView :id="this.categoryId" :new="(this.modalTitle=='Nueva categoría')" />
     </b-modal>
   </div>
+</b-container>  
 </template>
 
 <script>
@@ -152,15 +160,14 @@
       editCategory(data) {
         this.categoryId = data.item.categoryId;
         this.modalTitle = "Editar categoría";
-        console.log(this.categoryId);
-        this.$refs.modalCategory.show();
+        this.$bvModal.show('modalCategory');
       },
       newCategory() {
         this.categoryId = 0;
         this.modalTitle = "Nueva categoría";
-        console.log(this.categoryId);
-        this.$refs.modalCategory.show();
+        this.$bvModal.show('modalCategory');
       },
+      
       handleError() {
         this.error = null;
       }

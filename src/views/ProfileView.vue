@@ -59,6 +59,7 @@
                         </div>
                     </template>
                     <h1>Valoraciones</h1>
+                    <RatingsListView />
                 </b-tab>
                 <b-tab v-if="isAdmin">
                     <template #title>
@@ -84,6 +85,9 @@
                 </b-tab>
             </b-tabs>
         </b-card>
+        <div @click="goAbout()" class="fluid-container footer">
+            <p class="text-center">Copyright &copy; 2022, Retroexchanges.</p>
+        </div>
     </div>
 </template>
 
@@ -94,7 +98,8 @@
     import ProductListView from '@/views/ProductListView.vue'
     import FavoriteProductList from '@/views/FavoriteProductList.vue'
     import BuyRequestListView from '@/views/BuyRequestListView.vue'
-    
+    import RatingsListView from '@/views/RatingsListView.vue'
+
     export default {
         name: 'RetroExchanges',
         components: {
@@ -103,7 +108,8 @@
             CategoryListView,
             ProductListView,
             FavoriteProductList,
-            BuyRequestListView
+            BuyRequestListView,
+            RatingsListView
         },
         data() {
             return {
@@ -114,8 +120,11 @@
             this.isAdmin = this.$store.getters.isAdmin;
         },
         methods: {
-             afterTabSelection: function() {
+            goAbout() {
+                const redirectUrl = '/About';
+                this.$router.replace(redirectUrl);
             },
+            afterTabSelection: function () {},
             handleError() {
                 this.error = null;
             }

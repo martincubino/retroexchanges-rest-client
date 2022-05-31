@@ -14,7 +14,7 @@ export default {
       }
     }).catch(e=>{
       let error_message = 'Fallo de autenticación. Intentelo de nuevo mas tarde.';
-      console.log(e.message);
+      error_message+=e.message;
       const error = new Error(error_message);
       throw error;
     });

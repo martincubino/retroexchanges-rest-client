@@ -1,4 +1,5 @@
 <template>
+<b-container fluid>
   <div class="form-group">
     <div class="mt-5">
       <b-form @submit="onSubmit">
@@ -82,6 +83,7 @@
       </b-form>
     </div>
   </div>
+  </b-container>
 </template>
 
 <script>
@@ -112,7 +114,7 @@
     },
     data() {
       return {
-        dismissSecs: 5,
+        dismissSecs: 3,
         dismissCountDown: 0,
         showDismissibleAlert: false,
         formIsValid: true,
@@ -126,8 +128,8 @@
         address: null,
         isAdmin: null,
         status: null,
-        password: null,
-        repassword: null,
+        password: '',
+        repassword: '',
         latitude: null,
         longitude: null,
         zoom: 0,
@@ -235,7 +237,7 @@
         if (
           this.email === '' ||
           !this.email.includes('@') ||
-          this.password.length < 6
+          (this.password.length != 0 && this.password.length < 6)
         ) {
           this.formFormatWarning =
             'Introduzca un correo electronico y contraseña válidos (contraseña mayor de 6 carácteres)';
@@ -253,8 +255,9 @@
           email: this.email,
           address: this.address,
           password: this.password,
-
+          status: this.status,
           nif: this.nif
+          
         }
         try {
           await this.$store.dispatch('user/updateUser', user);
@@ -278,11 +281,8 @@
         this.name = user.name;
         this.surname = user.surname;
         this.email = user.email;
-        this.password = user.password;
-        this.repassword = user.password;
         this.address = user.address;
         this.nif = user.nif;
-        this.isAdmin = user.isAdmin;
         this.status = user.status;
         this.getCoordinates();
       },
