@@ -17,5 +17,11 @@ body {
 .carousel-item {
   height:360px
 }
-
+.fluid-container.footer{
+  background: white;
+}
+.fluid-container.footer > *:last-child {
+    margin-bottom: 0px;
+    color: gray;
+}
 /*END RESETS*/

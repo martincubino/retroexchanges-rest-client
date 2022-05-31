@@ -77,8 +77,25 @@
       }
     },
     methods: {
-      onsubmit(data) {
-        console.log(data)
+      async loadProducts(params) {
+        this.params = `page=${this.currentPage}&size=${this.recordsPerPage}`;
+
+        try {
+          await this.$store.dispatch('product/loadProducts', params);
+          this.listItems = this.$store.getters['product/getProducts'];
+          this.totalPages = this.listItems.length;
+          this.isLoading = false;
+        } catch (error) {
+          this.error = error.message || 'No se pudo cargar el listado de productos';
+        }
+      },
+      async onsubmit(data) {
+        let params = {
+          type: 'name',
+          value: data
+        }
+        this.$root.$emit("message-from-app-vue",params);
+
       }
     }
   }

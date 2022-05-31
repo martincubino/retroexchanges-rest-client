@@ -1,5 +1,6 @@
 <template>
 <b-container fluid>
+  <div class="mt-5">
     <b-tabs>
       <b-tab>
         <template #title>
@@ -83,7 +84,7 @@
         </div>
       </b-tab>
     </b-tabs>
-
+</div>
 <b-modal size="lg" centered id="modalBuyRequestDetail" v-bind:title=this.modalTitle hide-footer>
             <BuyRequestDetail :buyrequest="this.buyrequest" />
         </b-modal>

@@ -1,5 +1,3 @@
-//const uri2blob = require('datauritoblob');
-
 export default {
   async loadFavorite(context, payload) {
     const token = context.rootGetters.token;
